@@ -89,6 +89,6 @@ func swapConfig(v *viper.Viper) error {
 		},
 	}
 	atomicCfg.Store(newCfg)
-	log.Printf("[configReader] 配置已更新: %+v\n", *newCfg)
+	log.Printf("[INFO][configReader] 配置已更新: %+v\n", *newCfg)
 	return nil
 }
