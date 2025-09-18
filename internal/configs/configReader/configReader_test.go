@@ -2,12 +2,12 @@ package configreader_test
 
 import (
 	configreader "JHETBackend/internal/configs/configReader"
-	"fmt"
+	"log"
 	"testing"
 )
 
 func TestConfigRead(t *testing.T) {
-	configreader.Init()
-	configreader.GetConfig()
-	fmt.Printf("%v", configreader.GetConfig())
+	log.Printf("%v", configreader.GetConfig())
+	log.Printf("%v", configreader.GetConfig().Database)
+	log.Printf("%v", configreader.GetConfig().Database.Host)
 }
