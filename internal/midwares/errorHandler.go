@@ -8,7 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 业务错误类型
+//TODO: error codes and naming (MucheXD/09.18)
+
+// #####CONST#####
+// disable only in dev or doing a demo for ZHEYI
+const enableFailFast = true
+
+//#####PUBLIC#####
+
+// 业务错误类型(实现Error()string，是一个标准的错误)
 type ErrorInfo struct {
 	Code int
 	Msg  string
@@ -53,17 +61,23 @@ func UnifiedErrorMiddleware() gin.HandlerFunc {
 	}
 }
 
+//#####PRIVATE#####
+
 func panicErrHandler(c *gin.Context) {
 	if rec := recover(); rec != nil {
-		// 1.1 如果是业务主动 panic 的 BizError
+		// 如果是业务主动 panic 的 BizError
 		if biz, ok := rec.(*ErrorInfo); ok {
+			log.Printf("[FATAL] %v", rec)
 			c.JSON(http.StatusOK, Responce{Code: biz.Code, Msg: biz.Msg})
 			c.Abort()
 			return
 		}
-		// 1.2 其它未知 panic
+		// 其它未知 panic
 		log.Printf("[FATAL] %v", rec)
 		c.JSON(http.StatusOK, Responce{Code: 50001, Msg: "未知崩溃，联系管理员"}) //TODO: 50001 错误码不规范
 		c.Abort()
+	}
+	if enableFailFast {
+		log.Panic("[PANIC] Panic found in errorHandler and Fail-Fast enabled.")
 	}
 }
