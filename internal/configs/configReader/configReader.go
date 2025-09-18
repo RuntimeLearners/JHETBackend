@@ -31,8 +31,10 @@ type InternalAppCfg struct {
 }
 
 // Get 并发安全返回最新配置，这是configReader的唯一对外接口
+var initOnce sync.Once
+
 func GetConfig() InternalAppCfg {
-	initConfigReader()
+	initOnce.Do(initConfigReader) //首次调用初始化（延迟初始化）
 	return atomicCfg.Load().(InternalAppCfg)
 }
 
@@ -45,27 +47,24 @@ var atomicCfg atomic.Value
 var configReader = viper.New()
 
 // 初始化配置读写器
-var once sync.Once
 
 func initConfigReader() {
-	once.Do(func() {
-		log.Print("[INFO] 初始化配置读写器")
-		configReader.AddConfigPath(appConfigPath) //搜索目录
-		configReader.SetConfigName(appConfigName) //配置文件名称
-		configReader.SetConfigType("yaml")
-		//首次读配置文件
-		rcfg_err := configReader.ReadInConfig()
+	log.Print("[INFO] 初始化配置读写器")
+	configReader.AddConfigPath(appConfigPath) //搜索目录
+	configReader.SetConfigName(appConfigName) //配置文件名称
+	configReader.SetConfigType("yaml")
+	//首次读配置文件
+	rcfg_err := configReader.ReadInConfig()
 
-		if rcfg_err != nil {
-			log.Fatalf("[FATAL][configReader] 无法读取配置文件 错误：%v", rcfg_err)
-		}
-		if err := updateConfig(configReader); err != nil {
-			log.Fatalf("[FATAL][configReader] 首次解析配置失败 错误: %v", err)
-		}
-		//实现配置文件热加载
-		configReader.WatchConfig()
-		configReader.OnConfigChange(hotLoadCfg)
-	})
+	if rcfg_err != nil {
+		log.Fatalf("[FATAL][configReader] 无法读取配置文件 错误：%v", rcfg_err)
+	}
+	if err := updateConfig(configReader); err != nil {
+		log.Fatalf("[FATAL][configReader] 首次解析配置失败 错误: %v", err)
+	}
+	//实现配置文件热加载
+	configReader.WatchConfig()
+	configReader.OnConfigChange(hotLoadCfg)
 }
 
 func hotLoadCfg(e fsnotify.Event) {
