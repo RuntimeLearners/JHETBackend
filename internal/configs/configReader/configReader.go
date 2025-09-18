@@ -48,10 +48,10 @@ type swaper struct {
 var configReader = viper.New()
 
 // 初始化配置读写器
-func init() {
+func Init() {
 	log.Print("[INFO] 初始化配置读写器")
-	configReader.AddConfigPath(".internal/configs/") //搜索目录
-	configReader.SetConfigName("configs")            //配置文件名称
+	configReader.AddConfigPath("../")     //搜索目录
+	configReader.SetConfigName("configs") //配置文件名称
 	configReader.SetConfigType("yaml")
 	//首次读配置文件
 	rcfg_err := configReader.ReadInConfig()
