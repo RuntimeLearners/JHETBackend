@@ -49,7 +49,7 @@ var configReader = viper.New()
 // 初始化配置读写器
 
 func initConfigReader() {
-	log.Print("[INFO] 初始化配置读写器")
+	log.Print("[INFO] 载入程序配置")
 	configReader.AddConfigPath(appConfigPath) //搜索目录
 	configReader.SetConfigName(appConfigName) //配置文件名称
 	configReader.SetConfigType("yaml")
@@ -80,6 +80,6 @@ func updateConfig(viper *viper.Viper) error {
 		return err
 	}
 	atomicCfg.Store(icfg)
-	log.Printf("[INFO][configReader] 配置已更新: %+v\n", &icfg)
+	log.Printf("[INFO][configReader] 程序配置已更新: %+v\n", &icfg)
 	return nil
 }
