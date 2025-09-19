@@ -2,10 +2,8 @@ package database
 
 import (
 	configreader "JHETBackend/internal/configs/configReader"
-	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -13,7 +11,7 @@ import (
 
 var DataBase *gorm.DB
 
-func Init() error {
+func InitDatabase() {
 
 	//TODO: 判断连接成功和报错的逻辑还要再改，研究下自动迁移相关的设置
 
@@ -30,25 +28,15 @@ func Init() error {
 	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
 		user, pass, host, port, name)
 
+	log.Printf("[INFO][DB] 尝试连接到数据库, dsn=%v", dsn)
+	var dbtmp *gorm.DB
+	var err error
 	// 使用 GORM 打开数据库连接
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	dbtmp, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true, // 关闭外键约束以提升迁移速度
 	})
-
-	sqlDB, err := db.DB() // 从 *gorm.DB 取出底层 *sql.DB
 	if err != nil {
-		log.Fatalf("get sql.DB failed: %v", err)
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-	if err := sqlDB.PingContext(ctx); err != nil {
-		log.Fatalf("ping mysql failed: %v", err)
-	}
-	log.Println("mysql connect ok")
-
-	// 如果连接失败，返回错误
-	if err != nil {
-		return fmt.Errorf("database connect failed: %w", err)
+		log.Panicf("[FATAL] Open database failed. Err: %v", err)
 	}
 	// // 自动迁移数据库结构
 	// if err = autoMigrate(db); err != nil {
@@ -56,6 +44,5 @@ func Init() error {
 	// }
 
 	// // 将数据库实例赋值给全局变量 DB
-	// DB = db
-	return nil
+	DataBase = dbtmp
 }
