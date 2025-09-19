@@ -11,7 +11,7 @@ import (
 
 //#####CONST#####
 
-const appConfigPath = "../configs"
+const appConfigPath = "../../configs/configs"
 const appConfigName = "appConfigs"
 
 //#####PUBLIC#####
@@ -27,7 +27,8 @@ type DatabaseCfg struct {
 }
 
 type InternalAppCfg struct {
-	Database DatabaseCfg `mapstructure:"database"`
+	Database       DatabaseCfg `mapstructure:"database"`
+	WebtokenSigkey string      `mapstructure:"webtoken_sigkey"`
 }
 
 // Get 并发安全返回最新配置，这是configReader的唯一对外接口
