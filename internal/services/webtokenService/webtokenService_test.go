@@ -11,7 +11,7 @@ import (
 func TestWebtokenService(t *testing.T) {
 	uid := uint64(123456789)
 	pgid := uint32(88)
-	expt := uint64(30)
+	expt := uint64(120)
 
 	tok := webtokenservice.GenerateWt(uid, pgid, expt)
 	log.Println("token:", tok)
@@ -41,10 +41,10 @@ func TestWebtokenService(t *testing.T) {
 
 func TestKey(t *testing.T) {
 	// 手动复制生成的tok到这里测试过期
-	tok := "Fc1bBwAAAABYAAAAXVfNaAAAAAAAAAAAXMcNchA4LoQvGOUbJyIJNfHf69iFvbHW"
+	tok := "Fc1bBwAAAABYAAAAxFvNaAAAAAAAAAAA8XvXmLW9pn1gT2VPmcqqtrtNNC-jKGYa"
 	isValid := webtokenservice.VerifyWt(tok)
 	if !isValid {
-		t.Error("not valid!.")
+		t.Error("not valid!..")
 		return
 	}
 }

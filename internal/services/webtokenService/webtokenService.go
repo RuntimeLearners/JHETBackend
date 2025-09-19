@@ -16,26 +16,34 @@ var wtSigkey [48]byte
 
 var readKeyOnce sync.Once
 
+/* wtoken 格式(48位)
+** ######## #### ######## #### ########################
+** 0-------8----12-------20---24----------------------48
+** 用户ID--权限组--过期时间-预留-24字节签名
+** 签名方式: SHA256(Metadata(即前24位字节)+Key(48字节))取前24字节
+** 全部占据48字节, 转换到base64刚好64字符
+ */
+
 // Generate 生成 token
 func GenerateWt(uid uint64, permGroupID uint32, validSecs uint64) string {
 
 	readKeyOnce.Do(readSigkey) // 读入签名密钥 (只执行一次)
 
 	// 打包 24B 元信息
-	var plain [24]byte
-	binary.LittleEndian.PutUint64(plain[0:8], uid)
-	binary.LittleEndian.PutUint32(plain[8:12], permGroupID)
+	var metadata [24]byte
+	binary.LittleEndian.PutUint64(metadata[0:8], uid)
+	binary.LittleEndian.PutUint32(metadata[8:12], permGroupID)
 	var expireTime = time.Now().Unix() + int64(validSecs) // 计算过期时间
-	binary.LittleEndian.PutUint64(plain[12:20], uint64(expireTime))
+	binary.LittleEndian.PutUint64(metadata[12:20], uint64(expireTime))
 
 	// 计算签名
 	// append 只接受切片+元素，因此拆分wtSigKey
-	hashResult := sha256.Sum256(append(plain[:], wtSigkey[:]...))
+	hashResult := sha256.Sum256(append(metadata[:], wtSigkey[:]...))
 	sig := hashResult[:24] // 取前 24 B
 
 	// 拼接并 base64
 	var tokenResult [48]byte
-	copy(tokenResult[:24], plain[:])
+	copy(tokenResult[:24], metadata[:])
 	copy(tokenResult[24:], sig)
 
 	log.Print("[INFO][wtService] A wtoken generated.")
