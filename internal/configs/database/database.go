@@ -42,7 +42,7 @@ func InitDatabase() {
 	// if err = autoMigrate(db); err != nil {
 	// 	return fmt.Errorf("database migrate failed: %w", err)
 	// }
-
-	// // 将数据库实例赋值给全局变量 DB
+	log.Printf("[INFO][DB] 数据库连接成功, 当前数据库: %s", name)
+	//连接成功传递到全局指针
 	DataBase = dbtmp
 }

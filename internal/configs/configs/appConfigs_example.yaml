@@ -1,0 +1,6 @@
+database:
+  host: (hostname)
+  port: (port)
+  username: root
+  password: (pwd)
+  dbname: (dbname)
