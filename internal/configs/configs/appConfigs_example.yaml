@@ -4,3 +4,5 @@ database:
   username: root
   password: (pwd)
   dbname: (dbname)
+
+webtoken_sigkey: (64字符Base64 如YKFAq3akQp5pEEAU8UqnrMGUr9lg4DxZZj6uRkHdcugUAcnxF89HunEkUugD0kIP)
