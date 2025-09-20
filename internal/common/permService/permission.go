@@ -1,113 +1,44 @@
-package permission
-
-import "JHETBackend/internal/configs/database"
-
+// permission.go
 package permission
 
 import (
-	"database/sql"
+	"JHETBackend/internal/configs/database"
+	"JHETBackend/internal/models"
 	"fmt"
+	"log"
 	"sync"
 )
 
-// 1. 权限枚举 —— 所有支持的权限
-type Permission string
+// 权限枚举，以 Perm_ 开头，与数据库列名一致
 
-const (
-	PermRead   Permission = "read"
-	PermWrite  Permission = "write"
-	PermDelete Permission = "delete"
-	PermAdmin  Permission = "admin"
-	PermExport Permission = "export"
-)
+type PermissionID uint32
 
-// 2. 内存中的权限缓存：groupID -> 拥有的权限集合
 var (
-	cache     map[int]map[Permission]struct{}
-	cacheOnce sync.Once
-	initErr   error
+	permissionGroups map[uint32]models.PermissionGroup // permGroupID -> 权限组 对应表
 )
 
-// Init 主动初始化缓存（如果不调用，第一次 HasPermission 会自动 init）
-func Init() error {
-	cacheOnce.Do(func() { initErr = loadPermissionGroups() })
-	return initErr
+// 加载数据库中的权限组权限表
+func loadFromDB() {
+	var tmpPermG []models.PermissionGroup
+	if err := database.DataBase.Model(&models.PermissionGroup{}).Find(&tmpPermG).Error; err != nil {
+		log.Panic("[FATAL][PERM] 无法读取权限列表")
+		return
+	}
+	// 写入 map，key 用 ID
+	for _, g := range tmpPermG {
+		permissionGroups[g.ID] = g
+	}
 }
 
-// 一次性把 PermissionGroup 表读进内存
-func loadPermissionGroups() error {
-	db := database.DB // 你的 *sql.DB
-	if db == nil {
-		return fmt.Errorf("database.DB is nil")
-	}
+var loadDBOnce sync.Once
 
-	// 这里假设表结构：
-	// CREATE TABLE PermissionGroup (
-	//   id     INT PRIMARY KEY,
-	//   read   BOOLEAN,
-	//   write  BOOLEAN,
-	//   delete BOOLEAN,
-	//   admin  BOOLEAN,
-	//   export BOOLEAN
-	// );
-	rows, err := db.Query(`
-		SELECT id, read, write, delete, admin, export
-		FROM PermissionGroup`)
-	if err != nil {
-		return fmt.Errorf("query PermissionGroup: %w", err)
-	}
-	defer rows.Close()
+func GetPermissionByGroupID(permGroupId uint32) (models.PermissionGroup, error) {
+	loadDBOnce.Do(loadFromDB) // 懒加载：从数据库获取权限组权限表
 
-	tmp := make(map[int]map[Permission]struct{})
-	for rows.Next() {
-		var (
-			id                      int
-			read, write, del, adm, exp bool
-		)
-		if err := rows.Scan(&id, &read, &write, &del, &adm, &exp); err != nil {
-			return fmt.Errorf("scan row: %w", err)
-		}
-		m := make(map[Permission]struct{})
-		if read {
-			m[PermRead] = struct{}{}
-		}
-		if write {
-			m[PermWrite] = struct{}{}
-		}
-		if del {
-			m[PermDelete] = struct{}{}
-		}
-		if adm {
-			m[PermAdmin] = struct{}{}
-		}
-		if exp {
-			m[PermExport] = struct{}{}
-		}
-		tmp[id] = m
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-	cache = tmp
-	return nil
-}
-
-// HasPermission 判断指定权限组是否拥有「全部」给定权限
-// 如果缓存未初始化，会自动 init（懒加载）。
-func HasPermission(permGroupId int, perms ...Permission) bool {
-	if err := Init(); err != nil {
-		// 一旦加载失败，默认拒绝
-		return false
-	}
-	set, ok := cache[permGroupId]
+	premGroupResult, ok := permissionGroups[permGroupId]
 	if !ok {
-		// 不存在的权限组
-		return false
+		log.Print("[ERROR][PERM] 尝试获取一个不存在的权限组权限")
+		return models.PermissionGroup{}, fmt.Errorf("permission group with ID %d not found", permGroupId)
 	}
-	for _, p := range perms {
-		if _, exist := set[p]; !exist {
-			return false
-		}
-	}
-	return true
+	return premGroupResult, nil
 }
