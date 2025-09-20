@@ -1,4 +1,4 @@
-package webtokenservice
+package webtoken
 
 import (
 	configreader "JHETBackend/internal/configs/configReader"

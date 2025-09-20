@@ -1,7 +1,7 @@
-package webtokenservice_test
+package webtoken_test
 
 import (
-	webtokenservice "JHETBackend/internal/services/webtokenService"
+	webtokenservice "JHETBackend/internal/common/webtoken"
 	"encoding/base64"
 	"encoding/binary"
 	"log"

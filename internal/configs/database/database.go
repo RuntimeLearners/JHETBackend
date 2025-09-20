@@ -4,6 +4,7 @@ import (
 	configreader "JHETBackend/internal/configs/configReader"
 	"fmt"
 	"log"
+	"sync"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,7 +12,13 @@ import (
 
 var DataBase *gorm.DB
 
-func InitDatabase() {
+var initDBOnce sync.Once
+
+func init() { // 立即加载数据库，根据需要可以删除
+	initDBOnce.Do(initDatabase)
+}
+
+func initDatabase() {
 
 	//TODO: 判断连接成功和报错的逻辑还要再改，研究下自动迁移相关的设置
 
