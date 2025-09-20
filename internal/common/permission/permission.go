@@ -13,9 +13,7 @@ import (
 
 type PermissionID uint32
 
-var (
-	permissionGroups map[uint32]models.PermissionGroup // permGroupID -> 权限组 对应表
-)
+var permissionGroups = map[uint32]models.PermissionGroup{} // permGroupID -> 权限组 对应表
 
 // 加载数据库中的权限组权限表
 func loadFromDB() {
@@ -41,4 +39,13 @@ func GetPermissionByGroupID(permGroupId uint32) (models.PermissionGroup, error) 
 		return models.PermissionGroup{}, fmt.Errorf("permission group with ID %d not found", permGroupId)
 	}
 	return premGroupResult, nil
+}
+
+func GetAllPermissionGroups() *map[uint32]models.PermissionGroup {
+	loadDBOnce.Do(loadFromDB) // 懒加载：从数据库获取权限组权限表
+	return &permissionGroups
+}
+
+func AddPermissionGroup(permissionGroup *models.PermissionGroup) error {
+	return database.DataBase.Create(permissionGroup).Error
 }

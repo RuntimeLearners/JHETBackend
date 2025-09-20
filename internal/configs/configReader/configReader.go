@@ -11,7 +11,7 @@ import (
 
 //#####CONST#####
 
-const appConfigPath = "../configs"
+const appConfigPath = "../../configs/configs"
 const appConfigName = "appConfigs"
 
 //#####PUBLIC#####
