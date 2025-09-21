@@ -13,8 +13,8 @@ func Test_TryGetPermission(t *testing.T) {
 }
 
 func Test_AddPermission(t *testing.T) {
-	log.Printf("%v", permission.AddPermissionGroup("TEST", permission.Perm_AnswerCreate, permission.Perm_PostCreate))
+	log.Printf("%v", permission.AddPermissionGroup("TEST", permission.Perm_ForTestOnly1))
 	log.Printf("%v", permission.GetAllPermissionGroups())
-	log.Printf("%v", permission.IsPermSatisfied(23, permission.Perm_AnswerCreate))
-	log.Printf("%v", permission.IsPermSatisfied(23, permission.Perm_PostDelete))
+	log.Printf("%v", permission.IsPermSatisfied(28, permission.Perm_ForTestOnly1))
+	log.Printf("%v", permission.IsPermSatisfied(28, permission.Perm_ForTestOnly2))
 }

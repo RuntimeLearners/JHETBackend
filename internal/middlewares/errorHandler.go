@@ -40,9 +40,9 @@ type ExceptionResponce struct {
 	Data interface{} `json:"data,omitempty"`
 }
 
-func NewBizExc(errCode int) BusinessException {
+func NewBizExc(errCode int) *BusinessException {
 	configreader.GetConfig()
-	return BusinessException{errCode, findMsgByCode(errCode)}
+	return &BusinessException{errCode, findMsgByCode(errCode)}
 }
 
 // 统一错误处理中间件：既收 c.Error 也收 panic

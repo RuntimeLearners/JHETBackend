@@ -13,16 +13,14 @@ import (
 )
 
 // 权限枚举，以 Perm_ 开头，与数据库列名一致
+type PermissionID uint32
+
 const (
-	_                 = iota // 0 空出来
-	Perm_PostCreate          // 1
-	Perm_PostDelete          // 2
-	Perm_RepairCreate        // 3
-	Perm_AnswerCreate        // 4
+	_                 PermissionID = 0
+	Perm_ForTestOnly1 PermissionID = 255
+	Perm_ForTestOnly2 PermissionID = 254
 	// 往下继续加...
 )
-
-type PermissionID uint32
 
 var permissionGroups = map[uint32]models.PermissionGroup{} // permGroupID -> 权限组 对应表
 
@@ -61,7 +59,7 @@ func GetAllPermissionGroups() *map[uint32]models.PermissionGroup {
 	return &permissionGroups
 }
 
-func IsPermSatisfied(permGroupId uint32, needed ...uint32) bool {
+func IsPermSatisfied(permGroupId uint32, needed ...PermissionID) bool {
 	tocheck, err := GetPermissionByGroupID(permGroupId)
 	if err != nil {
 		log.Print("[ERROR][PERM] 该权限组不存在 视为无权")
@@ -75,7 +73,7 @@ func IsPermSatisfied(permGroupId uint32, needed ...uint32) bool {
 	return true
 }
 
-func AddPermissionGroup(name string, permissions ...uint32) error {
+func AddPermissionGroup(name string, permissions ...PermissionID) error {
 	var newPG models.PermissionGroup
 	newPG.Name = name
 	newPG.Permissions = *bitset.New(255)
