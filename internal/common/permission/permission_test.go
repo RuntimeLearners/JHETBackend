@@ -2,7 +2,6 @@ package permission_test
 
 import (
 	"JHETBackend/internal/common/permission"
-	"JHETBackend/internal/models"
 	"log"
 	"testing"
 )
@@ -14,11 +13,8 @@ func Test_TryGetPermission(t *testing.T) {
 }
 
 func Test_AddPermission(t *testing.T) {
-	if err := permission.AddPermissionGroup(&models.PermissionGroup{
-		Name:  "Test_UserGroup4",
-		Perm1: false,
-		Perm2: true,
-	}); err != nil {
-		t.Errorf("please check dbwerror: %v", err)
-	}
+	log.Printf("%v", permission.AddPermissionGroup("TEST", permission.Perm_AnswerCreate, permission.Perm_PostCreate))
+	log.Printf("%v", permission.GetAllPermissionGroups())
+	log.Printf("%v", permission.IsPermSatisfied(23, permission.Perm_AnswerCreate))
+	log.Printf("%v", permission.IsPermSatisfied(23, permission.Perm_PostDelete))
 }
