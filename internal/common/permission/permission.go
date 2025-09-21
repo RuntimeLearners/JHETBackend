@@ -3,7 +3,8 @@ package permission
 
 import (
 	//"JHETBackend/internal/common/basics"
-	"JHETBackend/internal/configs/database"
+	"JHETBackend/internal/common/exception"
+	"JHETBackend/internal/dao"
 	"JHETBackend/internal/models"
 	"fmt"
 	"log"
@@ -66,18 +67,9 @@ var permissionGroups = map[uint32]models.PermissionGroup{} // permGroupID -> 权
 
 // 加载数据库中的权限组权限表
 func loadFromDB() {
-	var tmpPermG []models.PermissionGroup
-	if err := database.DataBase.Model(&models.PermissionGroup{}).Find(&tmpPermG).Error; err != nil {
-		log.Panic("[FATAL][PERM] 无法读取权限列表")
-		return
-	}
-	// 将数据输入map中，索引使用gpid
-	for _, g := range tmpPermG {
-		if err := g.Permissions.UnmarshalBinary(g.PermissionData); err != nil {
-			log.Panicf("[FATAL][PERM] 权限数据不符合规则 错误: %v", err)
-			return
-		}
-		permissionGroups[g.ID] = g
+	var err error
+	if permissionGroups, err = dao.GetAllPermissionGroup(); err != nil {
+		panic(exception.SysCannotLoadPermGroup)
 	}
 }
 
@@ -120,15 +112,7 @@ func AddPermissionGroup(name string, permissions ...PermissionID) error {
 	for _, perm := range permissions {
 		newPG.Permissions.Set(uint(perm))
 	}
-	pgdata, err := newPG.Permissions.MarshalBinary()
-	if err != nil {
-		log.Printf("[ERROR][PERM] 无法转换权限位图到字节型 保存权限表失败 错误: %v", err)
-	}
-	newPG.PermissionData = pgdata
-	dbnp := database.DataBase.Create(&newPG)
-	if dbnp.Error != nil {
-		return dbnp.Error
-	}
+	dao.AddPermissionGroup(newPG)
 	loadFromDB() // 重新从数据库载入权限表
 	return nil
 }

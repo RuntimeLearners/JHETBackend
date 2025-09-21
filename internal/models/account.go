@@ -4,5 +4,5 @@ type AccountInfo struct {
 	UID         uint64 `json:"uid"`
 	UserName    string `json:"username"`
 	Email       string
-	PermGroupID int32
+	PermGroupID uint32
 }

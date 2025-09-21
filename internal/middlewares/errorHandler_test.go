@@ -1,6 +1,7 @@
 package middleware_test
 
 import (
+	"JHETBackend/internal/common/exception"
 	middleware "JHETBackend/internal/middlewares"
 	"errors"
 	"log"
@@ -44,7 +45,7 @@ func TestUnifiedErrorHandler_CErrorExp(t *testing.T) {
 	router := gin.New()
 	router.Use(middleware.UnifiedErrorHandler())
 	router.GET("/error", func(c *gin.Context) {
-		c.Error(&middleware.BusinessException{1001, "ExpErr"})
+		c.Error(exception.TestIntendedException)
 	})
 
 	//自发请求，用于测试
