@@ -1,8 +1,8 @@
 package middleware_test
 
 import (
-	"JHETBackend/internal/common/exception"
-	middleware "JHETBackend/internal/middlewares"
+	"JHETBackend/common/exception"
+	middleware "JHETBackend/middlewares"
 	"errors"
 	"log"
 	"net/http"

@@ -1,7 +1,7 @@
 package database
 
 import (
-	configreader "JHETBackend/internal/configs/configReader"
+	configreader "JHETBackend/configs/configReader"
 	"fmt"
 	"log"
 	"sync"

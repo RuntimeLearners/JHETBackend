@@ -1,8 +1,8 @@
 package router
 
 import (
-	"JHETBackend/internal/common/permission"
-	middleware "JHETBackend/internal/middlewares"
+	"JHETBackend/common/permission"
+	middleware "JHETBackend/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

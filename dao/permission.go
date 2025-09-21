@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"JHETBackend/internal/configs/database"
-	"JHETBackend/internal/models"
+	"JHETBackend/configs/database"
+	"JHETBackend/models"
 	"log"
 
 	"github.com/bits-and-blooms/bitset"

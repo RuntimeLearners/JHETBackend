@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"JHETBackend/internal/common/exception"
-	"JHETBackend/internal/common/permission"
+	"JHETBackend/common/exception"
+	"JHETBackend/common/permission"
 
 	"github.com/gin-gonic/gin"
 )

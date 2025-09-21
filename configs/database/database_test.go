@@ -1,7 +1,7 @@
 package database_test
 
 import (
-	"JHETBackend/internal/configs/database"
+	"JHETBackend/configs/database"
 	"log"
 	"testing"
 )

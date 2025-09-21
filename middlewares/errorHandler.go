@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"JHETBackend/internal/common/exception"
+	"JHETBackend/common/exception"
 	"errors"
 	"log"
 	"net/http"

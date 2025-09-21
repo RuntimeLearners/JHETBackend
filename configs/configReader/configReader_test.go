@@ -1,7 +1,7 @@
 package configreader_test
 
 import (
-	configreader "JHETBackend/internal/configs/configReader"
+	configreader "JHETBackend/configs/configReader"
 	"log"
 	"testing"
 )
