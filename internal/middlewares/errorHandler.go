@@ -12,8 +12,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-//TODO: error codes and naming (MucheXD/09.18)
-
 // #####CONST#####
 // disable only in dev or doing a demo for ZHEYI
 const enableFailFast = true
