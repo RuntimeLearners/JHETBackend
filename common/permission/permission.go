@@ -2,10 +2,10 @@
 package permission
 
 import (
-	//"JHETBackend/internal/common/basics"
-	"JHETBackend/internal/common/exception"
-	"JHETBackend/internal/dao"
-	"JHETBackend/internal/models"
+	//"JHETBackend/common/basics"
+	"JHETBackend/common/exception"
+	"JHETBackend/dao"
+	"JHETBackend/models"
 	"fmt"
 	"log"
 	"sync"

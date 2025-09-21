@@ -1,7 +1,7 @@
 package permission_test
 
 import (
-	"JHETBackend/internal/common/permission"
+	"JHETBackend/common/permission"
 	"log"
 	"testing"
 )

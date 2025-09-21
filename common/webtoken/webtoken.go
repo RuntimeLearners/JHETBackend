@@ -1,7 +1,7 @@
 package webtoken
 
 import (
-	configreader "JHETBackend/internal/configs/configReader"
+	configreader "JHETBackend/configs/configReader"
 	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
