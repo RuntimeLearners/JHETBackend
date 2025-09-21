@@ -19,6 +19,44 @@ const (
 	_                 PermissionID = 0
 	Perm_ForTestOnly1 PermissionID = 255
 	Perm_ForTestOnly2 PermissionID = 254
+
+	// 登录
+	Perm_Login PermissionID = 253 // 登录
+
+	// 个人信息
+	Perm_GetProfile    PermissionID = 252 // 获取个人信息
+	Perm_UpdateProfile PermissionID = 251 // 修改个人信息
+	Perm_UpdateAvatar  PermissionID = 250 // 更改头像
+
+	// 问题反馈
+	Perm_SubmitFeedback   PermissionID = 249 // 提交反馈
+	Perm_UploadImage      PermissionID = 248 // 上传图片
+	Perm_ViewFeedback     PermissionID = 247 // 查看反馈（反馈详情）
+	Perm_AcceptOrder      PermissionID = 246 // 接单
+	Perm_MarkAsSpam       PermissionID = 245 // 标记垃圾
+	Perm_ReplyFeedback    PermissionID = 244 // 回复反馈
+	Perm_RateFeedback     PermissionID = 243 // 评价反馈
+	Perm_QueryFeedbackLog PermissionID = 242 // 查询反馈记录
+
+	// 管理面板
+	// 超管 - 用户
+	Perm_GetUserList        PermissionID = 241 // 获取用户列表
+	Perm_AddUser            PermissionID = 240 // 新增用户
+	Perm_EditUser           PermissionID = 239 // 编辑用户
+	Perm_DeleteUser         PermissionID = 238 // 删除用户
+	Perm_GetUserPermission  PermissionID = 237 // 获取用户权限
+	Perm_EditUserPermission PermissionID = 236 // 编辑用户权限
+
+	// 超管 - 垃圾审核
+	Perm_GetPendingSpam PermissionID = 235 // 获取待审核垃圾
+	Perm_ReviewSpam     PermissionID = 234 // 审核垃圾
+
+	// 预设
+	Perm_EditPreset   PermissionID = 233 // 编辑预设
+	Perm_ViewPreset   PermissionID = 232 // 查看预设
+	Perm_AddPreset    PermissionID = 231 // 新增预设
+	Perm_DeletePreset PermissionID = 230 // 删除预设
+
 	// 往下继续加...
 )
 
