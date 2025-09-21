@@ -25,7 +25,6 @@ func TestUnifiedErrorHandler_Panic(t *testing.T) {
 	}()
 
 	gin.SetMode(gin.TestMode)
-
 	router := gin.New()
 	router.Use(middleware.UnifiedErrorHandler())
 	router.GET("/panic", func(c *gin.Context) {
