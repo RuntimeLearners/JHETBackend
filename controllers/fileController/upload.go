@@ -1,62 +1,71 @@
-package filectrl
+package filecontroller
 
 import (
 	"JHETBackend/common/exception"
-	"fmt"
+	configreader "JHETBackend/configs/configReader"
+	"math/rand"
 	"net/http"
 	"path/filepath"
-	"time"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
-// FileController 可以把一组文件相关的 handler 挂在这里
-type FileController struct {
-	// 如果后面要加数据库、日志、配置，可以丢进来
-	UploadDir string // 文件落盘目录
-}
+var fileSaveDir string
+var largeFileSize int
 
-// NewFileController 构造函数，外部可以注入目录
-func NewFileController(uploadDir string) *FileController {
-	return &FileController{UploadDir: uploadDir}
+// 初始化模块 载入保存目录等
+func initFileController() {
+	fileSaveDir = configreader.GetConfig().FileObject.Dir
+	largeFileSize = configreader.GetConfig().FileObject.LargeFileSize
 }
 
 // UploadFile 处理单文件上传  POST /upload
-func (fc *FileController) UploadFile(c *gin.Context) {
-	// 1. 取出文件（multipart）
+
+var initOnce sync.Once
+
+func UploadFile(c *gin.Context) {
+	initOnce.Do(initFileController)
+
+	// 取出文件（multipart）
 	file, header, err := c.Request.FormFile("file")
 	if err != nil {
 		c.Error(exception.ApiNoFormFile)
 		return
 	}
-	defer file.Close()
+	// 函数结束时关闭文件
+	defer func() {
+		file.Close()
+		// TODO：将文件名改为哈希，方便后期校验
+	}()
 
-	// 2. 简单校验
-	const maxSize = 10 << 20 // 10 MB
-	if header.Size > maxSize {
-		c.JSON(http.StatusRequestEntityTooLarge, gin.H{"msg": "文件太大"})
-		return
-	}
-	ext := filepath.Ext(header.Filename)
-	allow := map[string]bool{".jpg": true, ".jpeg": true, ".png": true}
-	if !allow[ext] {
-		c.Error(exception.ApiFileNotSupported)
+	// 校验文件大小 之后可以在权限列表中增加大文件上传权限(ENHANCEMENT)
+	if header.Size > int64(largeFileSize) {
+		c.Error(exception.ApiFileTooLarge)
 		return
 	}
 
-	//TODO: 下面这些AI代码简直是依托，还要改 MucheXD/09.21
+	// 生成临时文件名 32长度随机字符确保随机性
+	tmpName := "tmp_" + randStrGenerater(32)
+	// 拼接路径
+	dstPath := filepath.Join(fileSaveDir, tmpName)
 
-	// 3. 生成唯一文件名
-	newName := fmt.Sprintf("%d_%s", time.Now().Unix(), ext)
-	dstPath := filepath.Join(fc.UploadDir, newName)
-
-	// 4. 落盘
+	// 文件落盘
 	if err := c.SaveUploadedFile(header, dstPath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"msg": "保存失败"})
+		c.JSON(http.StatusInternalServerError, exception.FileCannotSaveUploaded)
 		return
 	}
 
-	// 5. 返回访问地址（这里简单拼一个相对路径，生产环境最好走 CDN/对象存储）
-	url := "/static/" + newName
-	c.JSON(http.StatusOK, gin.H{"url": url})
+	// 返回文件名交还前端
+	// TODO 确定API规则后填写此处
+
+}
+
+func randStrGenerater(length int) string {
+	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
 }

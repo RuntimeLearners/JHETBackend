@@ -26,9 +26,15 @@ type DatabaseCfg struct {
 	DBName   string `mapstructure:"dbname"`
 }
 
+type FileObjectCfg struct {
+	Dir           string `mapstructure:"dir"`
+	LargeFileSize int    `mapstructure:"large_file_size"`
+}
+
 type InternalAppCfg struct {
-	Database       DatabaseCfg `mapstructure:"database"`
-	WebtokenSigkey string      `mapstructure:"webtoken_sigkey"`
+	Database       DatabaseCfg   `mapstructure:"database"`
+	FileObject     FileObjectCfg `mapstructure:"fileobject"`
+	WebtokenSigkey string        `mapstructure:"webtoken_sigkey"`
 }
 
 // Get 并发安全返回最新配置，这是configReader的唯一对外接口
