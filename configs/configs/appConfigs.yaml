@@ -1,8 +1,0 @@
-database:
-  host: 114.66.61.130
-  port: 46156
-  username: root
-  password: 5AkJrrw4zc5IHGx6
-  dbname: JHETDev
-
-webtoken_sigkey: YKFAq3akQp5pEEAU8UqnvMGUr9lg4DxZZj6uRkHdcugUAcnxF89HunEkUugD0kIP

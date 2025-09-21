@@ -1,5 +1,5 @@
 # Ignore specific config file
-internal/configs/configs/appConfigs.yaml
+configs/configs/appConfigs.yaml
 pull.bat
 # Ignore all .exe files
 *.exe
