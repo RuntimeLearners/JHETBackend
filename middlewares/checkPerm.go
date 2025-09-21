@@ -11,7 +11,9 @@ func NeedPerm(needed ...permission.PermissionID) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		pgid := uint32(c.GetUint("PermissionGroupID"))
 		if pgid == 0 {
+			//c.Redirect(401, "/login")
 			c.Error(exception.UsrNotLogin)
+			c.AbortWithStatus(401) // 直接返回401
 			return
 		}
 		if !permission.IsPermSatisfied(pgid, needed...) {
