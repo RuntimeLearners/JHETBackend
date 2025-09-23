@@ -4,7 +4,7 @@ import (
 	"JHETBackend/common/permission"
 	middleware "JHETBackend/middlewares"
 
-	//"JHETBackend/controllers/loginController"
+	"JHETBackend/controllers/loginControllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func InitEngine() *gin.Engine {
 			permission.Perm_ForTestOnly1,
 			permission.Perm_ForTestOnly2), SayHello)
 
-	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), SayHello)
+	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), loginControllers.AuthByCombo)
 
 	ginEngine.GET("/api/auth/register", middleware.UnifiedErrorHandler(), SayHello)
 

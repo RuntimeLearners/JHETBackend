@@ -11,7 +11,7 @@ type AccountInfo struct {
 	RealName      string `json:"realname" gorm:"column:realname;index"`
 	Email         string
 	PermGroupID   uint32       //用户类型
-	Password      string       `json:"-"`
+	Password      string       `json:"-"` //密码的哈希值
 	StudentID     string       `json:"studentID" gorm:"index"`     //学号
 	Major         string       `json:"major"`         //专业
 	Department    string       `json:"department"`    //院系
