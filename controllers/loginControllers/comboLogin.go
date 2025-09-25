@@ -5,7 +5,6 @@ import (
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
 	"errors"
-	"regexp"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -27,28 +26,29 @@ func AuthByCombo(c *gin.Context) {
 		return
 	}
 
-	//用正则判断是id登录还是姓名登录
+	//用数据类型转换判断是id登录还是姓名登录
 	var user interface{}
 	var userErr error
-	matched, _ := regexp.MatchString(`^\d+$`, postForm.Account)
-	if matched {
+	//matched, _ := regexp.MatchString(`^\d+$`, postForm.Account) 正则,已弃用
+	var userID uint64
+	userID, err = strconv.ParseUint(postForm.Account, 10, 64)
+	if err != nil {
 		// Convert id string to uint64
-		var userID uint64
-		userID, err := strconv.ParseUint(postForm.Account, 10, 64)
-		if err != nil {
-			c.Error(exception.ApiParamError)
-			return
-		}
-		user, userErr = userService.GetUserByID(userID) //从数据库获取用户信息,判断用户存在
-	} else {
+
+		// if err != nil {
+		// 	c.Error(exception.ApiParamError)
+		// 	return
+		// }
 		//fmt.Println("姓名登录:", postForm.Account)
 		user, userErr = userService.GetUserByName(postForm.Account) //从数据库获取用户信息,判断用户存在
+	} else {
+		user, userErr = userService.GetUserByID(userID) //从数据库获取用户信息,判断用户存在
 	}
 	if errors.Is(userErr, gorm.ErrRecordNotFound) {
 		c.Error(exception.UsrNotExisted)
 		return
 	}
-	if err != nil {
+	if userErr != nil {
 		c.Error(exception.SysUknExc)
 		return
 	}
