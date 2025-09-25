@@ -3,8 +3,9 @@ package filecontroller
 import (
 	"JHETBackend/common/exception"
 	configreader "JHETBackend/configs/configReader"
-	"net/http"
-	"path/filepath"
+	"JHETBackend/services/userService"
+	"io"
+	"mime/multipart"
 	"sync"
 
 	//"crypto/md5" hash算法库
@@ -25,39 +26,32 @@ func initFileController() {
 
 var initOnce sync.Once
 
-func UploadFile(c *gin.Context) {
-	initOnce.Do(initFileController)
-
-	// 取出文件（multipart）
-	file, header, err := c.Request.FormFile("file")
+func UploadAvatar(c *gin.Context) {
+	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		c.Error(exception.ApiNoFormFile)
 		return
 	}
-	// 函数结束时关闭文件
-	defer func() {
-		file.Close()
-		// TODO：将文件名改为哈希，方便后期校验
-	}()
-
-	// 校验文件大小 之后可以在权限列表中增加大文件上传权限(ENHANCEMENT)
-	if header.Size > int64(largeFileSize) {
+	if fileHeader.Size > int64(102400) { // 对头像文件限制 100kb
 		c.Error(exception.ApiFileTooLarge)
+	}
+	fileHandler, err := getFileHandler(fileHeader)
+	if err != nil {
+		c.Error(err) // 由于 getFileHandler 也使用统一错误，因此可以直接返回
 		return
 	}
-	// TODO: move to service
+	userService.UploadAvatar(fileHandler)
+}
 
-	// 生成临时文件名 32长度随机字符确保随机性
-	tmpName := "tmp_" + randStrGenerater(32)
-	// 拼接路径
-	dstPath := filepath.Join(fileSaveDir, tmpName)
-
-	// 文件落盘
-	if err := c.SaveUploadedFile(header, dstPath); err != nil {
-		c.JSON(http.StatusInternalServerError, exception.FileCannotSaveUploaded)
-		return
+func getFileHandler(fileHeader *multipart.FileHeader) (io.Reader, error) {
+	initOnce.Do(initFileController)
+	// 打开文件
+	fileHandler, err := fileHeader.Open()
+	if err != nil {
+		return nil, exception.ApiFileCannotOpen
 	}
 
-	// 返回文件名交还前端
-	// TODO 确定API规则后填写此处
+	defer fileHandler.Close() // 返回时关闭文件
+
+	return fileHandler, nil
 }
