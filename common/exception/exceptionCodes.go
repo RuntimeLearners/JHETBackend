@@ -7,7 +7,8 @@ var (
 	UsrNotLogin     = NewException(1001, "用户未登录")
 	UsrNotPermitted = NewException(1002, "用户无此权限")
 	UsrNotExisted   = NewException(1003, "用户不存在")
-	UsrPasswordErr  = NewException(1004, "用户密码错误")
+	UsrAlreadyExisted   = NewException(1004, "用户已存在")
+	UsrPasswordErr  = NewException(1005, "用户密码错误")
 
 	ApiNoFormFile       = NewException(4001, "无文件字段")
 	ApiFileTooLarge     = NewException(4002, "上传文件过大")
