@@ -3,7 +3,6 @@ package filecontroller
 import (
 	"JHETBackend/common/exception"
 	configreader "JHETBackend/configs/configReader"
-	"math/rand"
 	"net/http"
 	"path/filepath"
 	"sync"
@@ -44,6 +43,7 @@ func UploadFile(c *gin.Context) {
 		c.Error(exception.ApiFileTooLarge)
 		return
 	}
+	// TODO: move to service
 
 	// 生成临时文件名 32长度随机字符确保随机性
 	tmpName := "tmp_" + randStrGenerater(32)
@@ -58,14 +58,4 @@ func UploadFile(c *gin.Context) {
 
 	// 返回文件名交还前端
 	// TODO 确定API规则后填写此处
-
-}
-
-func randStrGenerater(length int) string {
-	const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(b)
 }
