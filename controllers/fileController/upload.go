@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sync"
 
+	//"crypto/md5" hash算法库
+
 	"github.com/gin-gonic/gin"
 )
 
