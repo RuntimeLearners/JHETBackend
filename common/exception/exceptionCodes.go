@@ -1,11 +1,13 @@
 package exception
 
 var (
+	VeryGood              = NewException(0000, "啥事都煤油花生!")
 	TestIntendedException = NewException(9000, "测试错误")
-	UsrNotLogin           = NewException(1001, "用户未登录")
-	UsrNotPermitted       = NewException(1002, "用户无此权限")
-	UsrNotExisted         = NewException(1003, "用户不存在")
-	UsrPasswordErr        = NewException(1004, "用户密码错误")
+
+	UsrNotLogin     = NewException(1001, "用户未登录")
+	UsrNotPermitted = NewException(1002, "用户无此权限")
+	UsrNotExisted   = NewException(1003, "用户不存在")
+	UsrPasswordErr  = NewException(1004, "用户密码错误")
 
 	ApiNoFormFile       = NewException(4001, "无文件字段")
 	ApiFileTooLarge     = NewException(4002, "上传文件过大")
@@ -14,7 +16,8 @@ var (
 	ApiFileCannotOpen   = NewException(4005, "无法打开上传的文件")
 
 	SysUknExc              = NewException(5000, "未知错误")
-	SysCannotLoadPermGroup = NewException(5001, "内部异常: 无法从数据库读取权限表")
+	SysCannotLoadFromDB    = NewException(5001, "内部异常: 读取数据库失败")
+	SysCannotLoadPermGroup = NewException(5002, "内部异常: 无法从数据库读取权限表")
 
 	FileCannotSaveUploaded = NewException(6001, "文件系统错误: 无法保存上传的文件")
 )
