@@ -25,6 +25,17 @@ func (e *Exception) NewWithData(code int, msg string, data interface{}) *Excepti
 	}
 }
 
+//食用方式
+
+// 动态创建异常
+// err := exception.NewException(9999, "动态生成的错误")
+
+// 动态创建带数据的异常
+// err := (&exception.Exception{}).NewWithData(8888, "带数据的错误", map[string]interface{}{
+//     "key": "value",
+//     "info": "额外的错误信息",
+// })
+
 // 历史遗留代码 舍不得删
 
 // func FindMsgByCode(errCode int) string {
