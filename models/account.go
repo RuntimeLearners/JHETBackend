@@ -6,13 +6,13 @@ import (
 )
 
 type AccountInfo struct {
-	ID            uint64       `json:"uid"` //默认为主键
+	ID            uint64       `gorm:"column:id;primaryKey"` //默认为主键
 	UserName      string       `json:"username" gorm:"column:username;index"`
 	RealName      string       `json:"realname" gorm:"column:realname;index"`
 	Email         string       `json:"email"`
 	PermGroupID   uint32       `json:"permGroupID"`            //用户类型
 	Password      string       `json:"-"`                      //密码的哈希值
-	StudentID     string       `json:"studentID" gorm:"index"` //学号
+	StudentID     string       `json:"studentID" gorm:"index"` //学号/人员编号
 	Major         string       `json:"major"`                  //专业
 	Department    string       `json:"department"`             //部门/院系 学生和管理员均有此项
 	Grade         string       `json:"grade"`                  //年级 F:2025
