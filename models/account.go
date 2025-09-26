@@ -10,13 +10,13 @@ type AccountInfo struct {
 
 	// 用户账号信息
 
-	ID           uint64 `json:"id" gorm:"column:id;primaryKey"`              // 默认为主键
-	Email        string `json:"email" gorm:"column:email;index"`             // 邮箱
-	PasswordHash string `json:"-" gorm:"column:password_hash"`               // 密码的哈希值
-	UserName     string `json:"username" gorm:"column:username;index"`       // 用户显示名称
-	PermGroupID  uint32 `json:"permGroupID" gorm:"column:permGroupID;index"` // 用户所在权限组
-	AvatarFile   string `json:"avatarFile"`                                  //头像文件名
-	Activation   string `json:"-"`                                           //账户激活状态(保留,用于验证邮箱是否存在)
+	ID           uint64 `json:"id" gorm:"column:id;primaryKey"`        // 默认为主键
+	Email        string `json:"email" gorm:"column:email;index"`       // 邮箱
+	PasswordHash string `json:"-" gorm:"column:password_hash"`         // 密码的哈希值
+	UserName     string `json:"username" gorm:"column:username;index"` // 用户显示名称
+	PermGroupID  uint32 `json:"permGroupID" gorm:"index"`              // 用户所在权限组
+	AvatarFile   string `json:"avatarFile"`                            //头像文件名
+	Activation   string `json:"-"`                                     //账户激活状态(保留,用于验证邮箱是否存在)
 
 	// 用户关联信息
 
