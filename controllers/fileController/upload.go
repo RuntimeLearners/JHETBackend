@@ -8,7 +8,7 @@ import (
 	"mime/multipart"
 	"sync"
 
-	//"crypto/md5" hash算法库
+	//"crypto/md5" hash算法库 <<< 请使用sha256!(MucheXD)
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +26,7 @@ func initFileController() {
 
 var initOnce sync.Once
 
-func UploadAvatar(c *gin.Context) {
+func UpdateAvatar(c *gin.Context) {
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
 		c.Error(exception.ApiNoFormFile)
