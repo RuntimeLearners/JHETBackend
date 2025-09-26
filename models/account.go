@@ -10,12 +10,12 @@ type AccountInfo struct {
 
 	// 用户账号信息
 
-	ID           uint64 `json:"id" gorm:"column:id"`                         // 默认为主键
+	ID           uint64 `json:"id" gorm:"column:id;primaryKey"`              // 默认为主键
 	Email        string `json:"email" gorm:"column:email;index"`             // 邮箱
-	PasswordHash string `json:"-" gorm:"column:passwordHash"`                // 密码的哈希值
+	PasswordHash string `json:"-" gorm:"column:password_hash"`               // 密码的哈希值
 	UserName     string `json:"username" gorm:"column:username;index"`       // 用户显示名称
 	PermGroupID  uint32 `json:"permGroupID" gorm:"column:permGroupID;index"` // 用户所在权限组
-	AvatarFile   string `json:"avatarFile"`                                  //头像文件名
+	AvatarFile   string `json:"avatar_file"`                                 //头像文件名
 
 	// 用户关联信息
 
