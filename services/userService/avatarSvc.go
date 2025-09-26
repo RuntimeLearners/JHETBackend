@@ -1,8 +1,23 @@
 package userService
 
-import "io"
+import (
+	"JHETBackend/common/exception"
+	"JHETBackend/dao"
+	fileservice "JHETBackend/services/fileService"
+	"io"
+	"log"
+)
 
-func UploadAvatar(fileHandler io.Reader) {
-	// TODO: 此处调用dao设置用户头像，以及调用fileService存盘
-
+// 此处调用fileService存盘，然后调用dao更新数据库中用户头像信息
+func UploadAvatar(accountID uint64, fileHandler io.Reader) error {
+	filedst, err := fileservice.SaveUploadedFile(&fileHandler)
+	if err != nil {
+		log.Printf("[ERROR][UserSvc/AvatarSvc] 不能保存用户头像文件 %v", err)
+		return exception.ApiFileNotSaved // 转换成统一错误返回，原error信息丢失
+	}
+	err = dao.UpdateAccountAvatar(accountID, filedst)
+	if err != nil {
+		return err
+	}
+	return nil
 }
