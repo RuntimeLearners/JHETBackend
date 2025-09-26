@@ -21,7 +21,7 @@ type permissionGroupDB struct {
 }
 
 func (permissionGroupDB) TableName() string {
-	return "PermissionGroups"
+	return "permission_groups" // 数据库表名：由于名称后缀有DB所以需要手动指定
 }
 
 func GetAllPermissionGroup() (result map[uint32]models.PermissionGroup, err error) {
