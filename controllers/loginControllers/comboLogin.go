@@ -2,9 +2,12 @@ package loginControllers
 
 import (
 	"JHETBackend/common/exception"
+	"JHETBackend/common/webtoken"
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
+	"JHETBackend/utils"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +17,8 @@ import (
 type passwordLoginForm struct {
 	Account  string `json:"account" binding:"required"` //返回的姓名或id
 	Password string `json:"password" binding:"required"`
-	Remenber bool   `json:"rememberMe" binding:"required"` //记住我
+	UserType string `json:"userType"`                      //用户类型 0学生 1教师 2管理员
+	Remember bool   `json:"rememberMe" binding:"required"` //记住我
 }
 
 // AuthByPassword 通过密码认证
@@ -25,8 +29,8 @@ func AuthByCombo(c *gin.Context) {
 		c.Error(exception.ApiParamError)
 		return
 	}
-
-	//用数据类型转换判断是id登录还是姓名登录
+	fmt.Println("登录信息:", postForm)
+	//用数据类型转换判断是编号登录还是姓名登录
 	var user interface{}
 	var userErr error
 	//matched, _ := regexp.MatchString(`^\d+$`, postForm.Account) 正则,已弃用
@@ -39,9 +43,10 @@ func AuthByCombo(c *gin.Context) {
 		// 	c.Error(exception.ApiParamError)
 		// 	return
 		// }
-		//fmt.Println("姓名登录:", postForm.Account)
+		fmt.Println("姓名登录:", postForm.Account)
 		user, userErr = userService.GetUserByName(postForm.Account) //从数据库获取用户信息,判断用户存在
 	} else {
+		fmt.Println("编号登录:", postForm.Account)
 		user, userErr = userService.GetUserByID(userID) //从数据库获取用户信息,判断用户存在
 	}
 	if errors.Is(userErr, gorm.ErrRecordNotFound) {
@@ -58,13 +63,23 @@ func AuthByCombo(c *gin.Context) {
 		c.Error(exception.SysUknExc)
 		return
 	}
+
 	if err := userService.VerifyPwd(accountInfo, postForm.Password); err != nil { //验证密码
 		var apiErr *exception.Exception
 		if errors.As(err, &apiErr) {
-			//exception.NewException(c, apiErr, err)
+			fmt.Println("密码错误0:", err)
+			c.Error(exception.UsrPasswordErr)
 		} else {
-			//apiException.AbortWithException(c, apiException.ServerError, err)
+			fmt.Println("密码错误1:", err)
+			c.Error(exception.SysCannotLoadFromDB)
 		}
 		return
 	}
+	//TODO:解决秘钥签名错误的问题
+	utils.JsonSuccessResponse(c, "登录成功", map[string]interface{}{
+		"token":    webtoken.GenerateWt(accountInfo.ID, accountInfo.PermGroupID, 100000000),
+		"userID":   accountInfo.ID,
+		"username": accountInfo.UserName,
+		"userType": accountInfo.PermGroupID,
+	})
 }

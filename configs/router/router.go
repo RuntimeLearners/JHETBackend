@@ -5,6 +5,7 @@ import (
 	middleware "JHETBackend/middlewares"
 
 	"JHETBackend/controllers/loginControllers"
+	"JHETBackend/controllers/registerControllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,14 +20,20 @@ func SayHello(c *gin.Context) {
 func InitEngine() *gin.Engine {
 	ginEngine := gin.Default()
 
+	// // 添加中间件处理字符编码
+	// ginEngine.Use(func(c *gin.Context) {
+	// 	c.Header("Content-Type", "application/json; charset=utf-8")
+	// 	c.Next()
+	// })
+
 	ginEngine.GET("/test", middleware.UnifiedErrorHandler(),
 		middleware.NeedPerm(
 			permission.Perm_ForTestOnly1,
 			permission.Perm_ForTestOnly2), SayHello)
 
-	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), loginControllers.AuthByCombo)
+	ginEngine.POST("/api/auth/login/combo", middleware.UnifiedErrorHandler(), loginControllers.AuthByCombo)
+	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), SayHello)
 
-	ginEngine.GET("/api/auth/register", middleware.UnifiedErrorHandler(), SayHello)
-
+	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateStudentUser)
 	return ginEngine
 }
