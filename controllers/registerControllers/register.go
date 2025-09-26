@@ -38,7 +38,7 @@ func CreateStudentUser(c *gin.Context) { //学生用户注册,强制绑定权限
 		postForm.UserName,
 		postForm.Major,
 		postForm.PhoneNumber,
-		1, //用户类型 PermGroupID
+		1, //用户类型 PermGroupID 需要修改
 	)
 	if err != nil {
 		if errors.Is(err, exception.ApiParamError) {

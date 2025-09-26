@@ -4,9 +4,10 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/configs/database"
 	"JHETBackend/models"
+	"crypto/sha256"
 	"errors"
+	"fmt"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -45,12 +46,15 @@ func CreateUser(
 		return nil, err
 	}
 
-	hashPassword := []byte(password)
-	hashedPassword, err := bcrypt.GenerateFromPassword(hashPassword, 12) //cost
-	if err != nil {
-		//fmt.Println(err)
-		return nil, exception.SysPwdHashFailed
-	}
+	//hashedPassword, err := bcrypt.GenerateFromPassword(hashPassword, 12) //cost
+	hash := sha256.Sum256([]byte(password))
+
+	// 将哈希值转换为十六进制字符串
+	hashedPassword := fmt.Sprintf("%x", hash)
+	// if err != nil {
+	// 	//fmt.Println(err)
+	// 	return nil, exception.SysPwdHashFailed
+	// }
 	//fmt.Println(string(hashedPassword))
 
 	if userName == "" {
