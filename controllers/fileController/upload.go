@@ -40,7 +40,12 @@ func UploadAvatar(c *gin.Context) {
 		c.Error(err) // 由于 getFileHandler 也使用统一错误，因此可以直接返回
 		return
 	}
-	userService.UploadAvatar(fileHandler)
+	accountID, err := getAccountIDFromContext(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	userService.UploadAvatar(accountID, fileHandler)
 }
 
 func getFileHandler(fileHeader *multipart.FileHeader) (io.Reader, error) {
@@ -54,4 +59,16 @@ func getFileHandler(fileHeader *multipart.FileHeader) (io.Reader, error) {
 	defer fileHandler.Close() // 返回时关闭文件
 
 	return fileHandler, nil
+}
+
+func getAccountIDFromContext(c *gin.Context) (uint64, error) {
+	accountIDObj, ok := c.Get("AccountID")
+	if !ok { // 用户id不存在，视为未登录
+		return 0, exception.UsrNotLogin
+	}
+	accountID, ok := accountIDObj.(uint64)
+	if !ok { // 用户id不合法，视为未登录
+		return 0, exception.UsrNotLogin
+	}
+	return accountID, nil
 }
