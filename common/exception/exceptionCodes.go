@@ -9,6 +9,7 @@ var (
 	UsrNotExisted     = NewException(1003, "用户不存在")
 	UsrAlreadyExisted = NewException(1004, "用户已存在") //邮箱或者人员编号(学生ID)重复
 	UsrPasswordErr    = NewException(1005, "用户密码错误")
+	UsrLoginInvalid   = NewException(1006, "用户登录无效")
 
 	ApiNoFormFile       = NewException(4001, "无文件字段")
 	ApiFileTooLarge     = NewException(4002, "上传文件过大")

@@ -80,6 +80,16 @@ func VerifyWt(webtoken string) (isValid bool) {
 	return true
 }
 
+func GetWtPayload(webtoken string) (uid uint64, permGroupID uint32, err error) {
+	tokdec, err := base64.RawURLEncoding.DecodeString(webtoken)
+	if err != nil || len(tokdec) != 48 {
+		return 0, 0, err
+	}
+	return binary.LittleEndian.Uint64(tokdec[0:8]),
+		binary.LittleEndian.Uint32(tokdec[8:12]),
+		nil
+}
+
 func readSigkey() {
 	sigkeytmp, err := base64.StdEncoding.DecodeString(configreader.GetConfig().WebtokenSigkey)
 	if err != nil {
