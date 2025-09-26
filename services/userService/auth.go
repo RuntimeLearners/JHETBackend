@@ -10,7 +10,7 @@ import (
 
 // Verify Password
 func VerifyPwd(user *models.AccountInfo, password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 		return exception.UsrPasswordErr
 	}

@@ -58,14 +58,14 @@ func CreateUser(
 	}
 
 	user := &models.AccountInfo{
-		StudentID:   studentID,
-		Password:    string(hashedPassword),
-		RealName:    realName,
-		Email:       email,
-		UserName:    userName,
-		Major:       major,
-		PhoneNumber: phoneNumber,
-		PermGroupID: permGroupID,
+		StudentID:    studentID,
+		PasswordHash: string(hashedPassword),
+		RealName:     realName,
+		Email:        email,
+		UserName:     userName,
+		Major:        major,
+		PhoneNumber:  phoneNumber,
+		PermGroupID:  permGroupID,
 	}
 
 	res := database.DataBase.Create(user)
