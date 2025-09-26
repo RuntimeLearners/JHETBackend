@@ -34,8 +34,7 @@ func AuthByCombo(c *gin.Context) {
 	var user interface{}
 	var userErr error
 	//matched, _ := regexp.MatchString(`^\d+$`, postForm.Account) 正则,已弃用
-	var userID uint64
-	userID, err = strconv.ParseUint(postForm.Account, 10, 64)
+	_, err = strconv.ParseUint(postForm.Account, 10, 64)
 	if err != nil {
 		// Convert id string to uint64
 
@@ -47,7 +46,7 @@ func AuthByCombo(c *gin.Context) {
 		user, userErr = userService.GetUserByName(postForm.Account) //从数据库获取用户信息,判断用户存在
 	} else {
 		fmt.Println("编号登录:", postForm.Account)
-		user, userErr = userService.GetUserByID(userID) //从数据库获取用户信息,判断用户存在
+		user, userErr = userService.GetUserByNum(postForm.Account) //从数据库获取用户信息,判断用户存在
 	}
 	if errors.Is(userErr, gorm.ErrRecordNotFound) {
 		c.Error(exception.UsrNotExisted)
@@ -80,6 +79,6 @@ func AuthByCombo(c *gin.Context) {
 		"token":    webtoken.GenerateWt(accountInfo.ID, accountInfo.PermGroupID, 100000000),
 		"userID":   accountInfo.ID,
 		"username": accountInfo.UserName,
-		"userType": accountInfo.PermGroupID,
+		"userType": strconv.FormatUint(uint64(accountInfo.PermGroupID), 10),
 	})
 }
