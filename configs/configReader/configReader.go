@@ -1,6 +1,8 @@
 package configreader
 
 import (
+	"bytes"
+	_ "embed"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -11,8 +13,15 @@ import (
 
 //#####CONST#####
 
+const modelLogName = "CfgReader"
 const appConfigPath = "./configs/configs"
 const appConfigName = "appConfigs"
+
+// TEST: 内嵌的配置文件
+//
+//go:embed appConfigs_fortest.yaml
+var embedAppCfg []byte
+var testenv = false
 
 //#####PUBLIC#####
 
@@ -56,7 +65,14 @@ var configReader = viper.New()
 // 初始化配置读写器
 
 func initConfigReader() {
-	log.Print("[INFO] 载入程序配置")
+
+	// 载入内嵌配置文件(仅供测试环境)
+	if embedAppCfg != nil && testenv {
+		testenv_readinConfigOnce()
+		return
+	}
+
+	log.Printf("[INFO][%v] 载入程序配置", modelLogName)
 	configReader.AddConfigPath(appConfigPath) //搜索目录
 	configReader.SetConfigName(appConfigName) //配置文件名称
 	configReader.SetConfigType("yaml")
@@ -64,10 +80,10 @@ func initConfigReader() {
 	rcfg_err := configReader.ReadInConfig()
 
 	if rcfg_err != nil {
-		log.Fatalf("[FATAL][configReader] 无法读取配置文件 错误：%v", rcfg_err)
+		log.Fatalf("[FATAL][%v] 无法读取配置文件 错误：%v", modelLogName, rcfg_err)
 	}
 	if err := updateConfig(configReader); err != nil {
-		log.Fatalf("[FATAL][configReader] 首次解析配置失败 错误: %v", err)
+		log.Fatalf("[FATAL][%v] 首次解析配置失败 错误: %v", modelLogName, err)
 	}
 	//实现配置文件热加载
 	configReader.WatchConfig()
@@ -75,9 +91,9 @@ func initConfigReader() {
 }
 
 func hotLoadCfg(e fsnotify.Event) {
-	log.Printf("[WARN][configReader] 配置文件变动，开始热加载: %s\n", e.Name)
+	log.Printf("[WARN][%v] 配置文件变动，开始热加载: %s\n", modelLogName, e.Name)
 	if err := updateConfig(configReader); err != nil {
-		log.Printf("[ERROR][configReader] 热加载失败，配置未更新: %v\n", err)
+		log.Printf("[ERROR][%v] 热加载失败，配置未更新: %v\n", modelLogName, err)
 	}
 }
 
@@ -87,6 +103,14 @@ func updateConfig(viper *viper.Viper) error {
 		return err
 	}
 	atomicCfg.Store(icfg)
-	log.Printf("[INFO][configReader] 程序配置已更新: %+v\n", &icfg)
+	log.Printf("[INFO][%v] 程序配置已更新: %+v\n", modelLogName, &icfg)
 	return nil
+}
+
+func testenv_readinConfigOnce() {
+	log.Printf("[WARN][%v] 配置文件读写器处于测试环境, 热加载已禁用", modelLogName)
+	v := viper.New()
+	v.SetConfigType("yaml")
+	v.ReadConfig(bytes.NewReader(embedAppCfg))
+	updateConfig(v)
 }
