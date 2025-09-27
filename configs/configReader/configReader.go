@@ -21,7 +21,7 @@ const appConfigName = "appConfigs"
 //
 //go:embed appConfigs_fortest.yaml
 var embedAppCfg []byte
-var testenv = false
+var testenv = true
 
 //#####PUBLIC#####
 

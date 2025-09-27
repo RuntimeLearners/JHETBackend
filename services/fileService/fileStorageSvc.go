@@ -4,6 +4,7 @@ import (
 	configreader "JHETBackend/configs/configReader"
 	"crypto/rand"
 	"io"
+	"log"
 	"math/big"
 	"os"
 )
@@ -12,7 +13,12 @@ import (
 
 // 统一从io读文件存盘操作
 func SaveUploadedFile(ior *io.Reader) (string, error) {
-	dst, err := os.Create(configreader.GetConfig().FileObject.Dir + "/" + randStrGenerater(32))
+	dir := configreader.GetConfig().FileObject.Dir
+
+	fileName := randStrGenerater(32)
+	filePath := dir + "/" + fileName
+	dst, err := os.Create(filePath)
+
 	if err != nil {
 		return "", err
 	}
@@ -21,7 +27,8 @@ func SaveUploadedFile(ior *io.Reader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return dst.Name(), nil
+	log.Printf("[INFO][FileCtrl] New file uploaded, file: %v", dst.Name())
+	return fileName, nil
 }
 
 // #####PRIVATE#####
