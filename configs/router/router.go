@@ -31,9 +31,13 @@ func InitEngine() *gin.Engine {
 			permission.Perm_ForTestOnly1,
 			permission.Perm_ForTestOnly2), SayHello)
 
+	//登录注册这一块
 	ginEngine.POST("/api/auth/login/combo", middleware.UnifiedErrorHandler(), loginControllers.AuthByCombo)
 	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), SayHello)
 
 	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateStudentUser)
+	
+	//上传图片这一块
+	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
 	return ginEngine
 }

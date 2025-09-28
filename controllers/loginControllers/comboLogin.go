@@ -30,7 +30,8 @@ func AuthByCombo(c *gin.Context) {
 		return
 	}
 	fmt.Println("登录信息:", postForm)
-	//用数据类型转换判断是编号登录还是姓名登录
+
+	//用数据类型转换判断是编号登录还是邮箱登录
 	var user interface{}
 	var userErr error
 	//matched, _ := regexp.MatchString(`^\d+$`, postForm.Account) 正则,已弃用
@@ -44,10 +45,10 @@ func AuthByCombo(c *gin.Context) {
 		// }
 
 		// WARN(MUCHEXD) 取消姓名登录
-		// 显而易见，姓名说可以重复的
+		// 显而易见，姓名说可以重复的  改成邮箱登录
 
-		fmt.Println("姓名登录:", postForm.Account)
-		user, userErr = userService.GetUserByName(postForm.Account) //从数据库获取用户信息,判断用户存在
+		fmt.Println("邮箱登录:", postForm.Account)
+		user, userErr = userService.GetUserByEmail(postForm.Account) //从数据库获取用户信息,判断用户存在
 	} else {
 
 		// WARN(MUCHEXD) 命名不合理
