@@ -18,6 +18,6 @@ func UploadAvatar(accountID uint64, fileHandler io.Reader) error {
 	err = dao.UpdateAccountAvatar(accountID, fileName)
 	if err != nil {
 		return err
-	} // TODO: 此处没有检测是否正确更新数据库，需要检查机制
+	}
 	return nil
 }

@@ -42,9 +42,17 @@ func AuthByCombo(c *gin.Context) {
 		// 	c.Error(exception.ApiParamError)
 		// 	return
 		// }
+
+		// WARN(MUCHEXD) 取消姓名登录
+		// 显而易见，姓名说可以重复的
+
 		fmt.Println("姓名登录:", postForm.Account)
 		user, userErr = userService.GetUserByName(postForm.Account) //从数据库获取用户信息,判断用户存在
 	} else {
+
+		// WARN(MUCHEXD) 命名不合理
+		// 根据你的代码，"编号"指的是student_id，请在代码里使用更明确的命名
+
 		fmt.Println("编号登录:", postForm.Account)
 		user, userErr = userService.GetUserByNum(postForm.Account) //从数据库获取用户信息,判断用户存在
 	}
