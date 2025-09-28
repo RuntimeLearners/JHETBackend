@@ -4,22 +4,36 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // 获取当前用户的所有信息
 func GetAccountInfo(c *gin.Context) models.AccountInfo {
-	accountID, err := GetAccountIDFromContext(c)
+	var err error
+	var accountID uint64
+	accountID, err = GetAccountIDFromContext(c)
 	if err != nil {
 		c.Error(err)
 		return models.AccountInfo{}
 	}
-	accountInfo, err := userService.GetAccountInfoByUID(accountID)
+
+	//这一步是留给查别人的信息用的
+	userIDStr := c.DefaultQuery("id", string(accountID)) //如果不存在query, 返回自己的id
+	userID, err := strconv.ParseUint(userIDStr, 10, 64)  //尝试转换字符串->uint64
+	if err != nil {
+		c.Error(err)
+		c.Error(exception.ApiParamError)
+		return models.AccountInfo{}
+	}
+
+	accountInfo, err := userService.GetAccountInfoByUID(userID)
 	if err != nil {
 		c.Error(err)
 		return models.AccountInfo{}
 	}
+
 	return *accountInfo
 }
 
