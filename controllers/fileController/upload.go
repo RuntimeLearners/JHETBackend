@@ -2,7 +2,7 @@ package filecontroller
 
 import (
 	"JHETBackend/common/exception"
-	accountcontroller "JHETBackend/controllers/accountController"
+	accountcontroller "JHETBackend/controllers/accountControllers"
 	"JHETBackend/services/userService"
 	"io"
 	"mime/multipart"
