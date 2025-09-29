@@ -4,10 +4,12 @@ import (
 	"JHETBackend/common/permission"
 	middleware "JHETBackend/middlewares"
 
+	"JHETBackend/controllers/accountControllers"
 	"JHETBackend/controllers/loginControllers"
 	"JHETBackend/controllers/registerControllers"
 
 	"github.com/gin-gonic/gin"
+	//"github.com/silenceper/wechat/v2/openplatform/account"
 )
 
 func SayHello(c *gin.Context) {
@@ -27,6 +29,7 @@ func InitEngine() *gin.Engine {
 	// })
 
 	ginEngine.GET("/test", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
 		middleware.NeedPerm(
 			permission.Perm_ForTestOnly1,
 			permission.Perm_ForTestOnly2), SayHello)
@@ -36,8 +39,20 @@ func InitEngine() *gin.Engine {
 	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), SayHello)
 
 	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateStudentUser)
-	
+
 	//上传图片这一块
 	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
+
+	//用户信息这一块
+	//普通用户获取信息
+	ginEngine.GET("/api/user/info/:id", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		middleware.NeedPerm(permission.Perm_GetProfile),
+		func(c *gin.Context) {
+			info := accountControllers.GetAccountInfoUser(c)
+			c.JSON(200, info)
+		})
+
 	return ginEngine
+
 }
