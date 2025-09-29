@@ -1,7 +1,7 @@
-package AccountController_test
+package accountControllers_test
 
 import (
-	accountcontroller "JHETBackend/controllers/accountController"
+	accountcontroller "JHETBackend/controllers/accountControllers"
 	"log"
 	"testing"
 
