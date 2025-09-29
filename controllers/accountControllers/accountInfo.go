@@ -4,23 +4,25 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
+	"JHETBackend/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // 管理员获取用户信息
-func GetAccountInfoAdmin(c *gin.Context) models.AccountInfo {
+func GetAccountInfoAdmin(c *gin.Context) {
 	confidentiality := false //保密信息--否
 	if c.Query("id") == "" { //如果没有传入id参数
 		c.Error(exception.ApiParamError)
 		return models.AccountInfo{}
 	}
-	return GetAccountInfo(c, c.Query("id"), confidentiality)
+	accountInfo := GetAccountInfo(c, c.Query("id"), confidentiality)
+	utils.JsonSuccessResponse(c,"查询成功",accountInfo)
 }
 
 // 普通用户获取信息
-func GetAccountInfoUser(c *gin.Context) models.AccountInfo {
+func GetAccountInfoUser(c *gin.Context){
 	var accountID uint64
 	var err error
 	accountID, err = GetAccountIDFromContext(c)
@@ -31,11 +33,12 @@ func GetAccountInfoUser(c *gin.Context) models.AccountInfo {
 	accountIDStr := strconv.FormatUint(accountID, 10)
 	if c.Query("id") == "" || c.Query("id") == accountIDStr { //如果没有传入id参数或传入自己的id
 		confidentiality := false //保密信息--否
-		return GetAccountInfo(c, accountIDStr, confidentiality)
+		accountInfo := GetAccountInfo(c, accountIDStr, confidentiality)
 	}
 	//传入了别人的id
 	confidentiality := true //保密信息--是
-	return GetAccountInfo(c, c.Query("id"), confidentiality)
+	accountInfo := GetAccountInfo(c, c.Query("id"), confidentiality)
+	utils.JsonSuccessResponse(c,"查询成功",accountInfo)
 }
 
 // 获取用户的所有信息
