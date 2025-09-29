@@ -3,6 +3,7 @@ package router
 import (
 	"JHETBackend/common/permission"
 	middleware "JHETBackend/middlewares"
+	"fmt"
 
 	"JHETBackend/controllers/accountControllers"
 	"JHETBackend/controllers/loginControllers"
@@ -22,6 +23,7 @@ func SayHello(c *gin.Context) {
 func InitEngine() *gin.Engine {
 	ginEngine := gin.Default()
 
+	fmt.Println(gin.Context{})
 	// // 添加中间件处理字符编码
 	// ginEngine.Use(func(c *gin.Context) {
 	// 	c.Header("Content-Type", "application/json; charset=utf-8")
@@ -44,14 +46,25 @@ func InitEngine() *gin.Engine {
 	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
 
 	//用户信息这一块
-	//普通用户获取信息
-	ginEngine.GET("/api/user/info/:id", middleware.UnifiedErrorHandler(),
+	// 无需权限 测试用
+	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	accountControllers.GetAccountInfoUser)
+	// ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	accountControllers.GetAccountInfoAdmin)
+
+	//普通用户获取用户信息
+	ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
 		middleware.NeedPerm(permission.Perm_GetProfile),
-		func(c *gin.Context) {
-			info := accountControllers.GetAccountInfoUser(c)
-			c.JSON(200, info)
-		})
+		accountControllers.GetAccountInfoUser)
+
+	//管理员获取用户信息
+	ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		middleware.NeedPerm(permission.Perm_GetAnyProfile),
+		accountControllers.GetAccountInfoAdmin)
 
 	return ginEngine
 
