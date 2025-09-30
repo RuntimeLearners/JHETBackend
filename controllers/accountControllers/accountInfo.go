@@ -64,6 +64,11 @@ func GetAccountInfoUser(c *gin.Context) {
 	utils.JsonSuccessResponse(c, "查询成功", accountInfo)
 }
 
+// <comment(MucheXD)> 虽然这部分现在是你负责，但是为什么要把具有权限的
+// 获取用户信息和不具有权限的混在一个函数里... 这样你怎么写路由...?
+// 如果可以请拆开来! 另外, 代码中现在不应该出现Admin这样的关键字，我们已经不是按照实体权限区分了!
+// 请直接按照功能命名! 例如 GetAccountPublicInfo GetAccountAllInfo
+
 // 获取用户的所有信息
 func GetAccountInfo(c *gin.Context, userIDStr string, confidentiality bool) (models.AccountInfo, error) {
 	var err error
