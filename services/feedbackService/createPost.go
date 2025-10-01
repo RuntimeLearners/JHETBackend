@@ -3,12 +3,15 @@ package feedbackservice
 import (
 	"JHETBackend/common/exception"
 	"JHETBackend/dao"
+
+	"github.com/google/uuid"
 )
 
 type FeedbackPost struct {
 	UserID      uint64
 	Title       string
 	Content     string
+	Attachments []uuid.UUID // List of attachment UUIDs
 	Precedence  uint8
 	IsAnonymous bool
 	IsPrivate   bool
@@ -24,6 +27,7 @@ func CreateFeedbackPost(postdata FeedbackPost) error {
 		UserID:      postdata.UserID,
 		Title:       postdata.Title,
 		Content:     postdata.Content,
+		Attachments: postdata.Attachments,
 		Precedence:  postdata.Precedence,
 		IsAnonymous: postdata.IsAnonymous,
 		IsPrivate:   postdata.IsPrivate,
@@ -48,6 +52,7 @@ func ReplyFeedbackPost(replayPostdata FeedbackReplyPost) error {
 		UserID:      replayPostdata.UserID,
 		Title:       replayPostdata.Title,
 		Content:     replayPostdata.Content,
+		Attachments: replayPostdata.Attachments,
 		Precedence:  replayPostdata.Precedence,
 		IsAnonymous: replayPostdata.IsAnonymous,
 		IsPrivate:   replayPostdata.IsPrivate,

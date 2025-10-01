@@ -2,7 +2,7 @@ package filecontroller
 
 import (
 	"JHETBackend/common/exception"
-	accountcontroller "JHETBackend/controllers/accountControllers"
+	accountControllers "JHETBackend/controllers/accountControllers"
 	"JHETBackend/services/userService"
 	"io"
 	"mime/multipart"
@@ -30,7 +30,7 @@ func UpdateAvatar(c *gin.Context) {
 		c.Error(err) // 由于 getFileHandler 也使用统一错误，因此可以直接返回
 		return
 	}
-	accountID, err := accountcontroller.GetAccountIDFromContext(c)
+	accountID, err := accountControllers.GetAccountIDFromContext(c)
 	if err != nil {
 		c.Error(err)
 		return

@@ -4,6 +4,9 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/configs/database"
 	"JHETBackend/models"
+	"log"
+
+	"github.com/google/uuid"
 )
 
 // FeedbackPostDB 数据库模型 用于service层传入数据打包
@@ -11,6 +14,7 @@ type FeedbackPostDAO struct {
 	UserID      uint64
 	Title       string
 	Content     string
+	Attachments []uuid.UUID // List of attachment UUIDs
 	Precedence  uint8
 	IsAnonymous bool
 	IsPrivate   bool
@@ -29,15 +33,24 @@ func CreateFeedbackPost(postdata FeedbackPostDAO) error {
 	}
 
 	newPost := models.FeedbackPost{
-		UserID:      postdata.UserID,
-		Title:       postdata.Title,
-		Content:     postdata.Content,
-		Precedence:  postdata.Precedence,
-		IsAnonymous: postdata.IsAnonymous,
-		IsPrivate:   postdata.IsPrivate,
-		IsClosed:    false,
-		ParentID:    parentID,
-		ReplyDepth:  postdata.ReplyDepth,
+		UserID:          postdata.UserID,
+		Title:           postdata.Title,
+		Content:         postdata.Content,
+		Precedence:      postdata.Precedence,
+		HaveAttachments: (len(postdata.Attachments) > 0),
+		IsAnonymous:     postdata.IsAnonymous,
+		IsPrivate:       postdata.IsPrivate,
+		IsClosed:        false, // 新帖默认不关闭
+		ParentID:        parentID,
+		ReplyDepth:      postdata.ReplyDepth,
+	}
+
+	// 在引用表注册附件
+	if newPost.HaveAttachments {
+		if err := regPostAttachment(newPost.ID, postdata.Attachments); err != nil {
+			log.Printf("[ERROR][FeedbackPostDAO] 无法注册附件 错误 %v", err)
+			return exception.ApiFeedbackNotCreated
+		}
 	}
 
 	if err := database.DataBase.Create(&newPost).Error; err != nil {
@@ -72,4 +85,21 @@ func GetFeedbackReplyDepth(postID uint64) uint8 {
 		return 0
 	}
 	return depth
+}
+
+// ##### PRIVATE #####
+
+func regPostAttachment(postID uint64, obj_uuids []uuid.UUID) error {
+	for index, value := range obj_uuids {
+		newAttachmentRef := models.AttachmentRef{
+			ObjUUID:  value,
+			BizType:  "feedback_post", // 这个 dao 只处理这个业务
+			BizID:    postID,
+			BizIndex: index,
+		}
+		if err := database.DataBase.Create(&newAttachmentRef).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }

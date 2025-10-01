@@ -8,14 +8,15 @@ import (
 
 // FeedbackPost 对应表 feedback_posts
 type FeedbackPost struct {
-	ID          uint64 `gorm:"primaryKey;autoIncrement;comment:唯一帖子ID"`
-	UserID      uint64 `gorm:"not null;index;comment:发帖用户ID"`
-	Title       string `gorm:"size:255;not null;comment:标题"`
-	Content     string `gorm:"type:text;comment:正文"`
-	Precedence  uint8  `gorm:"not null;default:0;comment:优先级"`
-	IsAnonymous bool   `gorm:"not null;default:0;comment:是否匿名"`
-	IsPrivate   bool   `gorm:"not null;default:0;comment:是否公开"`
-	IsClosed    bool   `gorm:"not null;default:0;comment:是否已关闭"`
+	ID              uint64 `gorm:"primaryKey;autoIncrement;comment:唯一帖子ID"`
+	UserID          uint64 `gorm:"not null;index;comment:发帖用户ID"`
+	Title           string `gorm:"size:255;not null;comment:标题"`
+	Content         string `gorm:"type:text;comment:正文"`
+	Precedence      uint8  `gorm:"not null;default:0;comment:优先级"`
+	HaveAttachments bool   `gorm:"not null;default:0;comment:是否有附件"`
+	IsAnonymous     bool   `gorm:"not null;default:0;comment:是否匿名"`
+	IsPrivate       bool   `gorm:"not null;default:0;comment:是否公开"`
+	IsClosed        bool   `gorm:"not null;default:0;comment:是否已关闭"`
 	// 下面使用指针以区分 NULL 和 0
 	// ParentID 指回复的目标帖子
 	ParentID   *uint64        `gorm:"index:idx_parent,priority:1;comment:根帖ID"`

@@ -11,8 +11,10 @@ var (
 	UsrPasswordErr    = NewException(1005, "用户密码错误")
 	UsrLoginInvalid   = NewException(1006, "用户登录无效")
 
-	FbReplyPostNotFound = NewException(2002, "回复指向的原帖无效")
-	FbReplyNestTooDeep  = NewException(2003, "回复嵌套过深")
+	FbPostDataInvalid       = NewException(2001, "传入的反馈帖数据无效")
+	FbReplyPostNotFound     = NewException(2002, "回复指向的原帖无效")
+	FbReplyNestTooDeep      = NewException(2003, "回复嵌套过深")
+	FbPostAttachmentInvalid = NewException(2004, "反馈帖附件无效")
 
 	ApiNoFormFile         = NewException(4001, "无文件字段")
 	ApiFileTooLarge       = NewException(4002, "上传文件过大")
