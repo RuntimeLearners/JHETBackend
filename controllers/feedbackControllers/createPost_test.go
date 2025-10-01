@@ -27,8 +27,8 @@ func Test_CreateNewPost(t *testing.T) {
 		func(c *gin.Context) {
 			// 模拟中间件设置AccountID
 			c.Set("AccountID", uint64(14))
-			filecontroller.UpdateAvatar(c)
-		}, feedbackcontrollers.CreateFeedbackPost)
+			feedbackcontrollers.CreateFeedbackPost(c)
+		})
 
 	// 1. 上传文件
 	filePath := "../../testfile/test_avatar.jpg"

@@ -45,7 +45,13 @@ func CreateFeedbackPost(postdata FeedbackPostDAO) error {
 		ReplyDepth:      postdata.ReplyDepth,
 	}
 
-	// 在引用表注册附件
+	// TODO: 入库和注册附件放在事务中会更合理 但无伤大雅
+	// 帖子入库
+	if err := database.DataBase.Create(&newPost).Error; err != nil {
+		return exception.ApiFeedbackNotCreated
+	}
+
+	// 在引用表注册附件 先入库, 才能拿到正确的 id
 	if newPost.HaveAttachments {
 		if err := regPostAttachment(newPost.ID, postdata.Attachments); err != nil {
 			log.Printf("[ERROR][FeedbackPostDAO] 无法注册附件 错误: %v", err)
@@ -53,9 +59,6 @@ func CreateFeedbackPost(postdata FeedbackPostDAO) error {
 		}
 	}
 
-	if err := database.DataBase.Create(&newPost).Error; err != nil {
-		return exception.ApiFeedbackNotCreated
-	}
 	return nil
 }
 
