@@ -6,13 +6,14 @@ import (
 	"JHETBackend/models"
 	"errors"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func UpdateAccountAvatar(accountID uint64, fileName string) error {
+func UpdateAccountAvatar(accountID uint64, fileUUID uuid.UUID) error {
 	database.DataBase.Model(&models.AccountInfo{}).
 		Where("id = ?", accountID).
-		Update("avatar_file", fileName)
+		Update("avatar_fileuuid", fileUUID)
 	if database.DataBase.Error != nil {
 		// 数据库层面报错（如语法错误、连接失败）
 		return exception.SysCannotUpdate

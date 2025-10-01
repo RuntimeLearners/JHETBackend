@@ -48,7 +48,7 @@ func CreateFeedbackPost(postdata FeedbackPostDAO) error {
 	// 在引用表注册附件
 	if newPost.HaveAttachments {
 		if err := regPostAttachment(newPost.ID, postdata.Attachments); err != nil {
-			log.Printf("[ERROR][FeedbackPostDAO] 无法注册附件 错误 %v", err)
+			log.Printf("[ERROR][FeedbackPostDAO] 无法注册附件 错误: %v", err)
 			return exception.ApiFeedbackNotCreated
 		}
 	}
@@ -91,8 +91,12 @@ func GetFeedbackReplyDepth(postID uint64) uint8 {
 
 func regPostAttachment(postID uint64, obj_uuids []uuid.UUID) error {
 	for index, value := range obj_uuids {
+		valUUID, err := value.MarshalBinary() // 转换 UUID 到 []byte
+		if err != nil {
+			return exception.FbPostAttachmentInvalid
+		}
 		newAttachmentRef := models.AttachmentRef{
-			ObjUUID:  value,
+			ObjUUID:  valUUID,
 			BizType:  "feedback_post", // 这个 dao 只处理这个业务
 			BizID:    postID,
 			BizIndex: index,
