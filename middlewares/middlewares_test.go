@@ -13,6 +13,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func Test_CallAuthOnly(t *testing.T) {
+	middleware.Auth(&gin.Context{})
+}
+
 func TestUnifiedErrorHandler_Panic(t *testing.T) {
 
 	defer func() {
