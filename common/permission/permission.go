@@ -27,7 +27,8 @@ const (
 	// 个人信息
 	Perm_GetProfile    PermissionID = 010 // 获取个人信息
 	Perm_UpdateProfile PermissionID = 011 // 修改个人信息
-	Perm_UpdateAvatar  PermissionID = 012 // 更改头像
+	Perm_UpdatePwd     PermissionID = 012 // 修改密码
+	Perm_UpdateAvatar  PermissionID = 013 // 更改头像
 
 	//附件
 	Perm_UploadImage PermissionID = 021 // 上传图片
