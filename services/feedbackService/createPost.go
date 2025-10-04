@@ -7,18 +7,22 @@ import (
 	"github.com/google/uuid"
 )
 
-type FeedbackPost struct {
+type FeedbackBasics struct {
 	UserID      uint64
 	Title       string
 	Content     string
 	Attachments []uuid.UUID // List of attachment UUIDs
-	Precedence  uint8
 	IsAnonymous bool
-	IsPrivate   bool
+}
+
+type FeedbackPost struct {
+	FeedbackBasics
+	Precedence uint8
+	IsPrivate  bool
 }
 
 type FeedbackReplyPost struct {
-	FeedbackPost
+	FeedbackBasics
 	ParentID uint64
 }
 
@@ -53,9 +57,9 @@ func ReplyFeedbackPost(replayPostdata FeedbackReplyPost) error {
 		Title:       replayPostdata.Title,
 		Content:     replayPostdata.Content,
 		Attachments: replayPostdata.Attachments,
-		Precedence:  replayPostdata.Precedence,
+		Precedence:  0, // 回复帖没有优先级
 		IsAnonymous: replayPostdata.IsAnonymous,
-		IsPrivate:   replayPostdata.IsPrivate,
+		IsPrivate:   false, // 回复帖当然是公开的
 		ParentID:    replayPostdata.ParentID,
 		ReplyDepth:  parentReplyDepth + 1,
 	}

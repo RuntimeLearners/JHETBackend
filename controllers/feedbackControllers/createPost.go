@@ -61,13 +61,15 @@ func CreateFeedbackPost(c *gin.Context) {
 
 	// 组装业务对象
 	postData := feedbackservice.FeedbackPost{
-		UserID:      accountID,
-		Title:       req.Title,
-		Content:     req.Content,
-		Precedence:  precedence,
-		IsAnonymous: req.IsAnonymous,
-		IsPrivate:   req.IsPrivate,
-		Attachments: attachments,
+		FeedbackBasics: feedbackservice.FeedbackBasics{
+			UserID:      accountID,
+			Title:       req.Title,
+			Content:     req.Content,
+			Attachments: attachments,
+			IsAnonymous: req.IsAnonymous,
+		},
+		Precedence: precedence,
+		IsPrivate:  req.IsPrivate,
 	}
 
 	// 给到 service 层
