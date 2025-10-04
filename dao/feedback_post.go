@@ -10,7 +10,7 @@ import (
 )
 
 // FeedbackPostDB 数据库模型 用于service层传入数据打包
-type FeedbackPostDAO struct {
+type FeedbackPostDTO struct {
 	UserID      uint64
 	Title       string
 	Content     string
@@ -23,7 +23,7 @@ type FeedbackPostDAO struct {
 }
 
 // 数据库层: 创建一条帖子 函数抽象到只要是帖子就接受
-func CreateFeedbackPost(postdata FeedbackPostDAO) error {
+func CreateFbPost(postdata FeedbackPostDTO) error {
 
 	var parentID *uint64
 	if postdata.ParentID != 0 {
@@ -62,7 +62,7 @@ func CreateFeedbackPost(postdata FeedbackPostDAO) error {
 	return nil
 }
 
-func CheckFeedbackPostExist(postID uint64) bool {
+func CheckFbPostExist(postID uint64) bool {
 	var cnt int64
 	if err := database.DataBase.Model(&models.FeedbackPost{}).
 		Where("id = ?", postID).
@@ -78,7 +78,7 @@ func CheckFeedbackPostExist(postID uint64) bool {
 	return true
 }
 
-func GetFeedbackReplyDepth(postID uint64) uint8 {
+func GetFbReplyDepth(postID uint64) uint8 {
 	var depth uint8
 	if err := database.DataBase.Model(&models.FeedbackPost{}).
 		Where("id = ?", postID).
@@ -88,6 +88,62 @@ func GetFeedbackReplyDepth(postID uint64) uint8 {
 		return 0
 	}
 	return depth
+}
+
+// 根据帖子 ID 查询帖子主体数据及其附件 UUID 列表，封装成 FeedbackPostDTO 返回
+func GetFbPostData(postID uint64) (FeedbackPostDTO, error) {
+	var dto FeedbackPostDTO
+
+	// 查 FeedbackPost 主体
+	var postModel models.FeedbackPost
+	if err := database.DataBase.
+		First(&postModel, postID).Error; err != nil {
+		return FeedbackPostDTO{}, exception.FbPostNotFount
+	}
+
+	// 查附件 UUID 列表
+	attachmentUUIDs, err := getFbPostAttachmentsUUID(postID)
+	if err != nil {
+		log.Printf("[ERROR][FbPostDAO] 获取帖子附件 UUID 列表失败, 帖子ID: %d, 错误: %v", postID, err)
+		attachmentUUIDs = []uuid.UUID{} // 出错则视作无附件
+	}
+
+	// 组装 DTO
+	dto = FeedbackPostDTO{
+		UserID:      postModel.UserID,
+		Title:       postModel.Title,
+		Content:     postModel.Content,
+		Attachments: attachmentUUIDs,
+		Precedence:  postModel.Precedence,
+		IsAnonymous: postModel.IsAnonymous,
+		IsPrivate:   postModel.IsPrivate,
+		ParentID:    0, // 如果 ParentID 为 nil 则默认为 0
+		ReplyDepth:  postModel.ReplyDepth,
+	}
+	if postModel.ParentID != nil {
+		dto.ParentID = *postModel.ParentID
+	}
+	return dto, nil
+}
+
+func GetLatestCreatedFbIDs(maxCount int, offset int) []uint64 {
+	var ids []uint64
+	database.DataBase.Model(&models.FeedbackPost{}). // 指定模型
+								Order("created_at DESC"). // 按创建时间倒序
+								Limit(maxCount).          // 取前 N 条
+								Offset(offset).           // 偏移量
+								Pluck("id", &ids)         // 只查 id 字段并写入 ids 切片
+	return ids
+}
+
+func GetLatestUpdatedFbIDs(maxCount int, offset int) []uint64 {
+	var ids []uint64
+	database.DataBase.Model(&models.FeedbackPost{}). // 指定模型
+								Order("updated_at DESC"). // 按创建时间倒序
+								Limit(maxCount).          // 取前 N 条
+								Offset(offset).           // 偏移量
+								Pluck("id", &ids)         // 只查 id 字段并写入 ids 切片
+	return ids
 }
 
 // ##### PRIVATE #####
@@ -109,4 +165,26 @@ func regPostAttachment(postID uint64, obj_uuids []uuid.UUID) error {
 		}
 	}
 	return nil
+}
+
+func getFbPostAttachmentsUUID(postID uint64) ([]uuid.UUID, error) {
+	// 查附件引用记录, 并按 BizIndex 排序
+	var attachRefs []models.AttachmentRef
+	if err := database.DataBase.
+		Where("biz_type = ? AND biz_id = ?", "feedback_post", postID).
+		Order("biz_index ASC").
+		Find(&attachRefs).Error; err != nil {
+		return []uuid.UUID{}, err
+	}
+
+	// 将 []byte(uuid) 转成 uuid.UUID
+	attachments := make([]uuid.UUID, 0, len(attachRefs))
+	for _, ref := range attachRefs {
+		if len(ref.ObjUUID) == 16 { // 只有 16 位的才是合法 UUID
+			attachments = append(attachments, uuid.Must(uuid.FromBytes(ref.ObjUUID)))
+		} else {
+			log.Printf("[WARN][FbPostDAO] 发现非法附件 UUID 长度: %d, 跳过", len(ref.ObjUUID))
+		}
+	}
+	return attachments, nil
 }

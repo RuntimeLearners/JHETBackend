@@ -15,6 +15,8 @@ var (
 	FbReplyPostNotFound     = NewException(2002, "回复指向的原帖无效")
 	FbReplyNestTooDeep      = NewException(2003, "回复嵌套过深")
 	FbPostAttachmentInvalid = NewException(2004, "反馈帖附件无效")
+	FbPostNotFount          = NewException(2005, "反馈帖不存在")
+	FbPostDeleted           = NewException(2006, "反馈帖已被删除")
 
 	ApiNoFormFile         = NewException(4001, "无文件字段")
 	ApiFileTooLarge       = NewException(4002, "上传文件过大")

@@ -27,7 +27,7 @@ type FeedbackReplyPost struct {
 }
 
 func CreateFeedbackPost(postdata FeedbackPost) error {
-	daoReq := dao.FeedbackPostDAO{
+	daoReq := dao.FeedbackPostDTO{
 		UserID:      postdata.UserID,
 		Title:       postdata.Title,
 		Content:     postdata.Content,
@@ -38,21 +38,21 @@ func CreateFeedbackPost(postdata FeedbackPost) error {
 		ParentID:    0,
 		ReplyDepth:  0,
 	}
-	if err := dao.CreateFeedbackPost(daoReq); err != nil {
+	if err := dao.CreateFbPost(daoReq); err != nil {
 		return err
 	}
 	return nil
 }
 
 func ReplyFeedbackPost(replayPostdata FeedbackReplyPost) error {
-	if !dao.CheckFeedbackPostExist(replayPostdata.ParentID) {
+	if !dao.CheckFbPostExist(replayPostdata.ParentID) {
 		return exception.FbReplyPostNotFound
 	}
-	parentReplyDepth := dao.GetFeedbackReplyDepth(replayPostdata.ParentID)
+	parentReplyDepth := dao.GetFbReplyDepth(replayPostdata.ParentID)
 	if parentReplyDepth >= 1 {
 		return exception.FbReplyNestTooDeep
 	}
-	daoReq := dao.FeedbackPostDAO{
+	daoReq := dao.FeedbackPostDTO{
 		UserID:      replayPostdata.UserID,
 		Title:       replayPostdata.Title,
 		Content:     replayPostdata.Content,
@@ -63,7 +63,7 @@ func ReplyFeedbackPost(replayPostdata FeedbackReplyPost) error {
 		ParentID:    replayPostdata.ParentID,
 		ReplyDepth:  parentReplyDepth + 1,
 	}
-	if err := dao.CreateFeedbackPost(daoReq); err != nil {
+	if err := dao.CreateFbPost(daoReq); err != nil {
 		return err
 	}
 	return nil

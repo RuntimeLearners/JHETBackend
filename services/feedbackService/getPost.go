@@ -1,8 +1,33 @@
 package feedbackservice
 
+import "JHETBackend/dao"
+
 // struct __DTO
 
 // GetLatestFbPs (resCount int) -> [] struct
+
+// 获取最近创建的帖子
+func GetLatestFeedbackPosts(maxCount int, offset int) []FeedbackPost {
+	result := []FeedbackPost{}
+	fbPostIndexs := dao.GetLatestCreatedFbIDs(maxCount, offset)
+	for _, fbPostIndex := range fbPostIndexs {
+		if fbPostDataDTO, err := dao.GetFbPostData(fbPostIndex); err == nil {
+			fbPost := FeedbackPost{
+				FeedbackBasics: FeedbackBasics{
+					UserID:      fbPostDataDTO.UserID,
+					Title:       fbPostDataDTO.Title,
+					Content:     fbPostDataDTO.Content,
+					Attachments: fbPostDataDTO.Attachments,
+					IsAnonymous: fbPostDataDTO.IsAnonymous,
+				},
+				Precedence: fbPostDataDTO.Precedence,
+				IsPrivate:  fbPostDataDTO.IsPrivate,
+			}
+			result = append(result, fbPost)
+		}
+	}
+	return result
+}
 
 // GetLatestPublicFbPs (resCount int) -> [] struct
 
