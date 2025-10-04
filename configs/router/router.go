@@ -46,25 +46,37 @@ func InitEngine() *gin.Engine {
 	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
 
 	//用户信息这一块
-	// 无需权限 测试用
-	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
-	// 	middleware.Auth,
-	// 	accountControllers.GetAccountInfoUser)
-	// ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
-	// 	middleware.Auth,
-	// 	accountControllers.GetAccountInfoAdmin)
-
-	//普通用户获取用户信息
+	//无需权限 测试用
 	ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
-		middleware.NeedPerm(permission.Perm_GetProfile),
 		accountControllers.GetAccountInfoUser)
-
-	//管理员获取用户信息
 	ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
-		middleware.NeedPerm(permission.Perm_GetAnyProfile),
 		accountControllers.GetAccountInfoAdmin)
+	// 修改用户信息
+	ginEngine.PUT("/api/user/info/", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		accountControllers.UpdateAccountInfoUser)
+
+	// //TODO: 超管面板 增删改查用户
+	// //普通用户
+	// // 获取用户信息
+	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_GetProfile),
+	// 	accountControllers.GetAccountInfoUser)
+
+	// // 修改用户信息
+	// ginEngine.PUT("/api/user/info/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_UpdateProfile),
+	// 	accountControllers.UpdateAccountInfoUser)
+
+	// //管理员获取用户信息
+	// ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_GetAnyProfile),
+	// 	accountControllers.GetAccountInfoAdmin)
 
 	return ginEngine
 

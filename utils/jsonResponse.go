@@ -24,3 +24,8 @@ func JsonSuccessResponse(c *gin.Context, message string, data any) {
 func JsonErrorResponse(c *gin.Context, code int, message string) {
 	JsonResponse(c, http.StatusOK, code, message, nil)
 }
+
+// 返回错误+data json格式数据
+func JsonErrorResponseWithData(c *gin.Context, code int, message string, data any) {
+	JsonResponse(c, http.StatusOK, code, message, data)
+}

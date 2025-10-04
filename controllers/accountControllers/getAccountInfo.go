@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -109,7 +110,7 @@ func GetAccountInfo(c *gin.Context, userIDStr string, confidentiality bool) (mod
 	//result.DeletedAt = {}
 
 	if confidentiality { //保密信息
-		result.ID = 0
+		//result.ID = 0 //没必要,因为查询用id
 		result.RealName = "保密"
 		result.PermGroupID = 0
 		result.Email = "保密"
@@ -119,8 +120,11 @@ func GetAccountInfo(c *gin.Context, userIDStr string, confidentiality bool) (mod
 		result.StudentID = "保密"
 		result.Department = "保密"
 		result.Grade = "保密"
-		result.CreatedAt = result.CreatedAt.Truncate(0)
-		result.UpdatedAt = result.UpdatedAt.Truncate(0)
+		result.WechatOpenID = "保密"
+		result.TwoFactorAuth = "保密"
+		result.PasswordHash = "保密"
+		result.CreatedAt = time.Time{} // 设置为零值，JSON中会显示为空
+		result.UpdatedAt = time.Time{} // 设置为零值，JSON中会显示为空
 	}
 
 	return result, nil

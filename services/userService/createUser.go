@@ -46,8 +46,12 @@ func CreateUser(
 		return nil, err
 	}
 
-	//hashedPassword, err := bcrypt.GenerateFromPassword(hashPassword, 12) //cost
-	hash := sha256.Sum256([]byte(password))
+	var hash [32]byte
+	if password == "" {
+		hash = sha256.Sum256([]byte("abc132456")) //默认密码
+	} else {
+		hash = sha256.Sum256([]byte(password))
+	}
 
 	// 将哈希值转换为十六进制字符串
 	hashedPassword := fmt.Sprintf("%x", hash)

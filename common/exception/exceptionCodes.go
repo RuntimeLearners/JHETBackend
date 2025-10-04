@@ -4,12 +4,13 @@ var (
 	VeryGood              = NewException(0000, "啥事都煤油花生!")
 	TestIntendedException = NewException(9000, "测试错误")
 
-	UsrNotLogin       = NewException(1001, "用户未登录")
-	UsrNotPermitted   = NewException(1002, "用户无此权限")
-	UsrNotExisted     = NewException(1003, "用户不存在")
-	UsrAlreadyExisted = NewException(1004, "用户已存在") //邮箱或者人员编号(学生ID)重复
-	UsrPasswordErr    = NewException(1005, "用户密码错误")
-	UsrLoginInvalid   = NewException(1006, "用户登录无效")
+	UsrNotLogin           = NewException(1001, "用户未登录")
+	UsrNotPermitted       = NewException(1002, "用户无此权限")
+	UsrNotExisted         = NewException(1003, "用户不存在")
+	UsrAlreadyExisted     = NewException(1004, "用户已存在")   //邮箱或者人员编号(学生ID)重复
+	UsrInfoAlreadyExisted = NewException(1005, "用户信息已存在") //更新信息时邮箱重复
+	UsrPasswordErr        = NewException(1006, "用户密码错误")
+	UsrLoginInvalid       = NewException(1007, "用户登录无效")
 
 	FbPostDataInvalid       = NewException(2001, "传入的反馈帖数据无效")
 	FbReplyPostNotFound     = NewException(2002, "回复指向的原帖无效")
