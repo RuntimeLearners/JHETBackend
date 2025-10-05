@@ -58,25 +58,8 @@ func CreateUser(c *gin.Context, isAdmin bool) { //管理员新增用户
 		c.Error(exception.UsrEmailErr)
 		return
 	}
-
-	//映射权限组id
-	var permGroupID uint32
-	if postForm.UserType == "" || !isAdmin { //isAdmin == false
-		permGroupID = 1
-	} else {
-		switch postForm.UserType {
-		case "user":
-			permGroupID = 1
-		case "admin":
-			permGroupID = 2
-		case "superadmin":
-			permGroupID = 3
-		default:
-			c.Error(exception.ApiParamError)
-			fmt.Println("用户类型错误:", postForm.UserType)
-			return
-		}
-	}
+	
+	permGroupID := userService.MapPerm(c) //映射权限组id
 
 	fmt.Println("注册信息:", postForm)
 	user, err := userService.CreateUser(
