@@ -40,7 +40,7 @@ func InitEngine() *gin.Engine {
 	ginEngine.POST("/api/auth/login/combo", middleware.UnifiedErrorHandler(), loginControllers.AuthByCombo)
 	ginEngine.GET("/api/auth/login/combo", middleware.UnifiedErrorHandler(), SayHello)
 
-	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateStudentUser)
+	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateUserUser)
 
 	//上传图片这一块
 	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
@@ -62,12 +62,25 @@ func InitEngine() *gin.Engine {
 		middleware.Auth,
 		accountControllers.ChangePassword)
 
+	//超管
+	// 新增用户
+	ginEngine.POST("/api/admin/users", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		registerControllers.CreateUserAdmin)
+	//删除用户
+	ginEngine.DELETE("/api/admin/users/:id", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		accountControllers.DeleteAccount)
+
 	// //TODO: 超管面板 增删改查用户
 	//通用路由
 	// // 修改密码
 	// ginEngine.PUT("/api/user/pwd/", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
 	// 	accountControllers.ChangePassword)
+	// // 更改头像
+	// // ginEngine.POST("/api/user/avatar", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UpdateAvatar)
+	//
 	// //普通用户
 	// // 获取用户信息
 	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
@@ -82,11 +95,24 @@ func InitEngine() *gin.Engine {
 	// 	accountControllers.UpdateAccountInfoUser)
 
 	// //管理员
+
+	// //超级管理员
 	// //获取用户信息
 	// ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
 	// 	middleware.NeedPerm(permission.Perm_GetAnyProfile),
 	// 	accountControllers.GetAccountInfoAdmin)
+
+	// // 新增用户
+	// ginEngine.POST("/api/admin/users", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_AddUser),
+	// 	registerControllers.CreateUserAdmin)
+	// //删除用户
+	// ginEngine.DELETE("/api/admin/users/:id", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_DeleteUser),
+	// 	accountControllers.DeleteAccount)
 
 	return ginEngine
 

@@ -24,7 +24,7 @@ func UpdateAccountAvatar(accountID uint64, fileUUID uuid.UUID) error {
 	}
 	if database.DataBase.RowsAffected > 1 {
 		// 更新了多于一行，说明有严重问题
-		panic("[!]FATAL][DAO/Account] 更新用户头像时影响了多于一行记录，请检查数据库完整性")
+		panic("[!][FATAL][DAO/Account] 更新用户头像时影响了多于一行记录，请检查数据库完整性")
 	}
 	return nil
 }
@@ -43,4 +43,18 @@ func GetAccountInfoByID(accountID uint64) (*models.AccountInfo, error) {
 		panic("[!][FATAL][DAO/Account] 查询用户时返回了多于一行记录，请检查数据库完整性")
 	}
 	return &accountInfo[0], nil
+}
+
+func DeleteAccount(accountID uint64) error {
+	result := database.DataBase.Delete(&models.AccountInfo{}, accountID)
+	//恢复软删除 database.DataBase.Unscoped().Model(&models.AccountInfo{}).Where("id = ?", accountID).Update("deleted_at", nil).Error
+	//硬删除 database.DataBase.Unscoped().Delete(&models.AccountInfo{}, accountID).Error
+	if result.Error != nil {
+		//panic("[!][FATAL][DAO/Account] 删除用户时出错")
+		return exception.SysCannotUpdate
+	}
+	if result.RowsAffected == 0 {
+		return exception.UsrNotExisted
+	}
+	return nil
 }
