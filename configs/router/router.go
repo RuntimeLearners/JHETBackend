@@ -71,6 +71,10 @@ func InitEngine() *gin.Engine {
 	ginEngine.DELETE("/api/admin/users/:id", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
 		accountControllers.DeleteAccount)
+	//修改用户信息
+	ginEngine.PUT("/api/admin/users/:id", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		accountControllers.UpdateAccountInfoAdmin)
 
 	// //TODO: 超管面板 增删改查用户
 	//通用路由

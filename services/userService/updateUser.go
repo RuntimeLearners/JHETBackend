@@ -9,6 +9,8 @@ func UpdateUser(
 	userID uint64,
 	updateForm interface{},
 ) error {
+	//处理数据
+	
 	//更新用户信息
 	err := database.DataBase.Table("account_infos").Where("id = ?", userID).Updates(updateForm).Error
 	if err != nil {
