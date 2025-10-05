@@ -57,8 +57,17 @@ func InitEngine() *gin.Engine {
 	ginEngine.PUT("/api/user/info/", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
 		accountControllers.UpdateAccountInfoUser)
+	// 修改密码
+	ginEngine.PUT("/api/user/pwd/", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		accountControllers.ChangePassword)
 
 	// //TODO: 超管面板 增删改查用户
+	//通用路由
+	// // 修改密码
+	// ginEngine.PUT("/api/user/pwd/", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	accountControllers.ChangePassword)
 	// //普通用户
 	// // 获取用户信息
 	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
@@ -72,7 +81,8 @@ func InitEngine() *gin.Engine {
 	// 	middleware.NeedPerm(permission.Perm_UpdateProfile),
 	// 	accountControllers.UpdateAccountInfoUser)
 
-	// //管理员获取用户信息
+	// //管理员
+	// //获取用户信息
 	// ginEngine.GET("/api/admin/users/", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
 	// 	middleware.NeedPerm(permission.Perm_GetAnyProfile),
