@@ -9,8 +9,11 @@ var (
 	UsrNotExisted         = NewException(1003, "用户不存在")
 	UsrAlreadyExisted     = NewException(1004, "用户已存在")   //邮箱或者人员编号(学生ID)重复
 	UsrInfoAlreadyExisted = NewException(1005, "用户信息已存在") //更新信息时邮箱重复
-	UsrPasswordErr        = NewException(1006, "用户密码错误")
+	UsrPasswordErr        = NewException(1006, "用户密码错误") //在注册(合规性验证),登录,修改密码 时均使用此错误码
 	UsrLoginInvalid       = NewException(1007, "用户登录无效")
+	UsrEmailErr           = NewException(1008, "用户邮箱格式错误")
+	UsrEmailNotVerified   = NewException(1009, "用户邮箱未验证")
+	Usr2FAErr             = NewException(1010, "用户2FA认证错误")
 
 	FbPostDataInvalid       = NewException(2001, "传入的反馈帖数据无效")
 	FbReplyPostNotFound     = NewException(2002, "回复指向的原帖无效")

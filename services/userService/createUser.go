@@ -20,6 +20,7 @@ func CreateUser(
 	userName,
 	major,
 	phoneNumber string,
+	activation bool, //账户激活状态(保留,用于验证邮箱是否存在)
 	permGroupID uint32,
 ) (*models.AccountInfo, error) {
 
@@ -74,6 +75,7 @@ func CreateUser(
 		Major:        major,
 		PhoneNumber:  phoneNumber,
 		PermGroupID:  permGroupID,
+		Activation:   activation, //账户激活状态(保留,用于验证邮箱是否存在)
 	}
 
 	res := database.DataBase.Create(user)
