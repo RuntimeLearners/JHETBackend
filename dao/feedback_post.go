@@ -104,7 +104,7 @@ func GetFbPostData(postID uint64) (FeedbackPostDTO, error) {
 	var postModel models.FeedbackPost
 	if err := database.DataBase.
 		First(&postModel, postID).Error; err != nil {
-		return FeedbackPostDTO{}, exception.FbPostNotFount
+		return FeedbackPostDTO{}, exception.FbPostNotFound
 	}
 
 	// 查附件 UUID 列表
@@ -185,6 +185,38 @@ func GetFbIDsWithSearchParams(searchParams models.SearchParams) []uint64 {
 		Offset((searchParams.Page-1)*searchParams.Size). // 偏移量 溢出应该直接返回空
 		Pluck("id", &ids)                                // 直接选 id 列
 	return ids
+}
+
+func GetFbSpamStatus(postID uint64) (isSpam bool, spamChecked bool, err error) {
+	if err := database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", postID).
+		Select("is_spam", "spam_checked").
+		Scan(&struct {
+			IsSpam        *bool
+			SpamUnchecked *bool
+		}{&isSpam, &spamChecked}).Error; err != nil {
+		return false, false, exception.FbPostNotFound
+	}
+	return isSpam, spamChecked, nil
+}
+
+func SetFbPostStatus(fbPostID uint64, status string) error {
+	return database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Update("status", status).Error
+}
+
+func SetFbPostSpam(fbPostID uint64, isSpam bool) error {
+	return database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Update("is_spam", isSpam).
+		Update("spam_checked", false).Error
+}
+
+func SetFbPostSpamChecked(fbPostID uint64, acknowledge bool) error {
+	return database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Update("spam_checked", acknowledge).Error
 }
 
 // ##### PRIVATE #####

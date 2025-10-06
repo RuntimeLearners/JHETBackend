@@ -9,7 +9,7 @@ var (
 	UsrNotExisted         = NewException(1003, "用户不存在")
 	UsrAlreadyExisted     = NewException(1004, "用户已存在")   //邮箱或者人员编号(学生ID)重复
 	UsrInfoAlreadyExisted = NewException(1005, "用户信息已存在") //更新信息时邮箱重复
-	UsrPasswordErr        = NewException(1006, "用户密码错误") //在注册(合规性验证),登录,修改密码 时均使用此错误码
+	UsrPasswordErr        = NewException(1006, "用户密码错误")  //在注册(合规性验证),登录,修改密码 时均使用此错误码
 	UsrLoginInvalid       = NewException(1007, "用户登录无效")
 	UsrEmailErr           = NewException(1008, "用户邮箱格式错误")
 	UsrEmailNotVerified   = NewException(1009, "用户邮箱未验证")
@@ -19,8 +19,10 @@ var (
 	FbReplyPostNotFound     = NewException(2002, "回复指向的原帖无效")
 	FbReplyNestTooDeep      = NewException(2003, "回复嵌套过深")
 	FbPostAttachmentInvalid = NewException(2004, "反馈帖附件无效")
-	FbPostNotFount          = NewException(2005, "反馈帖不存在")
+	FbPostNotFound          = NewException(2005, "反馈帖不存在")
 	FbPostDeleted           = NewException(2006, "反馈帖已被删除")
+	FbPostUpdateFailed      = NewException(2007, "无法更新反馈帖")
+	FbNotSpamDontChecked    = NewException(2008, "反馈帖未被标记为垃圾信息，无需审核")
 
 	ApiNoFormFile         = NewException(4001, "无文件字段")
 	ApiFileTooLarge       = NewException(4002, "上传文件过大")

@@ -78,3 +78,7 @@ func CreateFeedbackPost(c *gin.Context) {
 		return
 	}
 }
+
+func CreateFeedbackReply(c *gin.Context) {
+	// TODO
+}
