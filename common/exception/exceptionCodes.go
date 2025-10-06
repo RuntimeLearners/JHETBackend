@@ -40,4 +40,7 @@ var (
 	SysCannotReadDB        = NewException(5005, "内部异常: 无法读取数据库")
 
 	FileCannotSaveUploaded = NewException(6001, "文件系统错误: 无法保存上传的文件")
+
+	// "code":    200,	"message": "success"
+	// Code: 9001, Msg: "UknBizError occurred"
 )

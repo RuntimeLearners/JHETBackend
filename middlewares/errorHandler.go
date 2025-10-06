@@ -45,22 +45,22 @@ func UnifiedErrorHandler() gin.HandlerFunc {
 				} else { //未知错误
 					log.Printf("[WARN][ErrMidware] 发生未知的业务错误: %v", err)
 					c.JSON(http.StatusOK, ExceptionResponce{
-						Code: 50001, Msg: "UknBizError occurred"}) //TODO: 50001 错误码不规范
+						Code: 9001, Msg: "UknBizError occurred"})
 				}
 			}
 			c.Abort()
+		} else {
+			// 成功时，返回统一的结构
+			data, exist := c.Get("data")
+			if !exist {
+				// 有的接口没数据，直接返回空 data
+				data = nil
+			}
+			c.JSON(http.StatusOK, gin.H{
+				"code":    200,
+				"message": "success",
+				"data":    data})
 		}
-
-		// 成功时，返回统一的结构
-		data, exist := c.Get("data")
-		if !exist {
-			// 有的接口没数据，直接返回空 data
-			data = nil
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"code":    200,
-			"message": "获取成功",
-			"data":    data})
 	}
 }
 
