@@ -5,7 +5,6 @@ import (
 	"JHETBackend/common/webtoken"
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
-	"JHETBackend/utils"
 	"errors"
 	"fmt"
 	"strconv"
@@ -84,7 +83,13 @@ func AuthByCombo(c *gin.Context) {
 		return
 	}
 	//TODO:解决秘钥签名错误的问题
-	utils.JsonSuccessResponse(c, "登录成功", map[string]interface{}{
+	// utils.JsonSuccessResponse(c, "登录成功", map[string]interface{}{
+	// 	"token":    webtoken.GenerateWt(accountInfo.ID, accountInfo.PermGroupID, 100000000),
+	// 	"userID":   accountInfo.ID,
+	// 	"username": accountInfo.UserName,
+	// 	"userType": strconv.FormatUint(uint64(accountInfo.PermGroupID), 10),
+	// })
+	c.Set("data", map[string]interface{}{
 		"token":    webtoken.GenerateWt(accountInfo.ID, accountInfo.PermGroupID, 100000000),
 		"userID":   accountInfo.ID,
 		"username": accountInfo.UserName,

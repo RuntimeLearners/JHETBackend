@@ -4,7 +4,6 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/models"
 	"JHETBackend/services/userService"
-	"JHETBackend/utils"
 	"errors"
 
 	"strconv"
@@ -29,7 +28,8 @@ func GetAccountInfoAdmin(c *gin.Context) {
 		c.Error(err)
 		return
 	} else {
-		utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+		//utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+		c.Set("data", accountInfo)
 	}
 }
 
@@ -53,7 +53,8 @@ func GetAccountInfoUser(c *gin.Context) {
 			c.Error(err)
 			return
 		} else {
-			utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+			//utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+			c.Set("data", accountInfo)
 			return
 		}
 	}
@@ -64,7 +65,8 @@ func GetAccountInfoUser(c *gin.Context) {
 		c.Error(err)
 		return
 	} else {
-		utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+		//utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+		c.Set("data", accountInfo)
 	}
 }
 

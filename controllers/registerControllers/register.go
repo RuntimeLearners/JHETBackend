@@ -3,7 +3,6 @@ package registerControllers
 import (
 	"JHETBackend/common/exception"
 	"JHETBackend/services/userService"
-	"JHETBackend/utils"
 	"errors"
 	"fmt"
 	"regexp"
@@ -20,7 +19,7 @@ type UserInfo struct {
 	Major       string `json:"major"`       //专业
 	PhoneNumber string `json:"phoneNumber"` //手机号
 	UserType    string `json:"userType"`    //用户类型, 在转到server时映射为对应的PermGroupID
-	Activation  *bool   `json:"activation"`  //账户激活状态(保留,用于验证邮箱是否存在)
+	Activation  *bool  `json:"activation"`  //账户激活状态(保留,用于验证邮箱是否存在)
 }
 
 func CreateUserUser(c *gin.Context) { //普通用户注册,强制绑定权限组PermGroupID=1
@@ -58,7 +57,7 @@ func CreateUser(c *gin.Context, isAdmin bool) { //管理员新增用户
 		c.Error(exception.UsrEmailErr)
 		return
 	}
-	
+
 	permGroupID := userService.MapPerm(c) //映射权限组id
 
 	fmt.Println("注册信息:", postForm)
@@ -88,7 +87,10 @@ func CreateUser(c *gin.Context, isAdmin bool) { //管理员新增用户
 		return
 	}
 
-	utils.JsonSuccessResponse(c, "注册成功", map[string]interface{}{
+	// utils.JsonSuccessResponse(c, "注册成功", map[string]interface{}{
+	// 	"userID": user.ID,
+	// })
+	c.Set("data", map[string]interface{}{
 		"userID": user.ID,
 	})
 }

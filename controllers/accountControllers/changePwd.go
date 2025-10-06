@@ -1,10 +1,9 @@
 package accountControllers
 
-import  (
+import (
 	"JHETBackend/common/exception"
-	"JHETBackend/services/userService"
 	"JHETBackend/models"
-	"JHETBackend/utils"
+	"JHETBackend/services/userService"
 	"errors"
 	"fmt"
 
@@ -36,7 +35,7 @@ func ChangePassword(c *gin.Context) {
 	fmt.Println(accountID, "修改密码")
 
 	var accountInfo *models.AccountInfo
-	accountInfo,err = userService.GetAccountInfoByUID(accountID)
+	accountInfo, err = userService.GetAccountInfoByUID(accountID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		c.Error(exception.UsrNotExisted)
 		return
@@ -61,7 +60,7 @@ func ChangePassword(c *gin.Context) {
 			return
 		}
 	} else {
-		utils.JsonSuccessResponse(c, "修改成功", nil)
+		//utils.JsonSuccessResponse(c, "修改成功", nil)
 		return
 	}
 }

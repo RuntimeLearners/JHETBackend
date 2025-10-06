@@ -57,7 +57,7 @@ func UpdateAccountInfoUser(c *gin.Context) {
 			utils.JsonErrorResponse(c, int(mysqlErr.Number), fmt.Sprintf("更新失败: %s", mysqlErr.Message))
 		}
 	} else {
-		utils.JsonSuccessResponse(c, "更新成功", nil)
+		//utils.JsonSuccessResponse(c, "更新成功", nil)
 		return
 	}
 }
@@ -107,7 +107,7 @@ func UpdateAccountInfoAdmin(c *gin.Context) {
 			utils.JsonErrorResponse(c, int(mysqlErr.Number), fmt.Sprintf("更新失败: %s", mysqlErr.Message))
 		}
 	} else {
-		utils.JsonSuccessResponse(c, "更新成功", nil)
+		//utils.JsonSuccessResponse(c, "更新成功", nil)
 		return
 	}
 }

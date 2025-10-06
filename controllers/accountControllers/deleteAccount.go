@@ -3,7 +3,6 @@ package accountControllers
 import (
 	"JHETBackend/common/exception"
 	"JHETBackend/dao"
-	"JHETBackend/utils"
 	"errors"
 	"fmt"
 	"strconv"
@@ -38,5 +37,5 @@ func DeleteAccount(c *gin.Context) {
 		return
 	}
 
-	utils.JsonSuccessResponse(c, "成功删除用户", nil)
+	//utils.JsonSuccessResponse(c, "成功删除用户", nil)
 }
