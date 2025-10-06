@@ -46,6 +46,8 @@ func GetAllFeedbackPosts(c *gin.Context) {
 	getFeedbackPosts(c, true)
 }
 
+// ##### PRIVATE #####
+
 // GetFeedbackPosts 处理 GET /api/feedback
 func getFeedbackPosts(c *gin.Context, showPrivates bool) {
 	var dto FeedbackQueryDTO
@@ -143,5 +145,3 @@ func getFeedbackPosts(c *gin.Context, showPrivates bool) {
 
 	c.Set("data", voList)
 }
-
-// ##### PRIVATE #####

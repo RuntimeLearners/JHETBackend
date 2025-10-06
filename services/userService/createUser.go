@@ -75,7 +75,13 @@ func CreateUser(
 		Major:        major,
 		PhoneNumber:  phoneNumber,
 		PermGroupID:  permGroupID,
-		Activation:   activation, //账户激活状态(保留,用于验证邮箱是否存在)
+		Activation:   "", //账户激活状态(保留,用于验证邮箱是否存在)
+	}
+
+	if activation { // 为什么账户激活状态使用string? <<< MucheXD-10.06
+		user.Activation = "true"
+	} else {
+		user.Activation = "false"
 	}
 
 	res := database.DataBase.Create(user)

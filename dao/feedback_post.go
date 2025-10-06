@@ -5,6 +5,7 @@ import (
 	"JHETBackend/configs/database"
 	"JHETBackend/models"
 	"log"
+	"reflect"
 	"time"
 
 	"github.com/google/uuid"
@@ -158,7 +159,6 @@ func GetFbIDsWithSearchParams(searchParams models.SearchParams) []uint64 {
 	// 生成函数指针组 用于统一调用
 	opts := []func(*gorm.DB) *gorm.DB{
 		addSearchCond("creater_id = ?", searchParams.CreaterID),
-		addSearchCond("show_privates = ?", searchParams.ShowPrivates),
 		addSearchCond("created_at <= ?", searchParams.CreatedBefore),
 		addSearchCond("created_at >= ?", searchParams.CreatedAfter),
 		addSearchCond("updated_at <= ?", searchParams.CreatedBefore),
@@ -232,9 +232,13 @@ func getFbPostAttachmentsUUID(postID uint64) ([]uuid.UUID, error) {
 
 // 判断传入是否为空并自动给 GORM 查询添加条件
 // 传回的是一个函数指针 务必注意使用时还需统一调用
+
 func addSearchCond(sqlFrag string, ptr any) func(*gorm.DB) *gorm.DB {
 	return func(tx *gorm.DB) *gorm.DB {
-		if ptr == nil {
+		// 这里因为使用了接口 所以需要用到反射
+		// AI 建议先加 Kind 判断来避免类型错误
+		// Kind 判断一定要在 IsNil 前面
+		if ptr == nil || (reflect.ValueOf(ptr).Kind() == reflect.Ptr && reflect.ValueOf(ptr).IsNil()) {
 			return tx // 空条件判断
 		}
 		return tx.Where(sqlFrag, ptr)

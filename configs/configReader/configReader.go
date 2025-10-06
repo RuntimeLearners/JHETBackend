@@ -18,7 +18,9 @@ const appConfigPath = "./configs/configs"
 const appConfigName = "appConfigs"
 
 // TEST: 内嵌的配置文件
+// 下面这行不是注释！是给编译器看的！谁给我删了..
 //
+//go:embed appConfigs_fortest.yaml
 var embedAppCfg []byte
 var testenv = true
 
