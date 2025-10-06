@@ -19,7 +19,6 @@ const appConfigName = "appConfigs"
 
 // TEST: 内嵌的配置文件
 //
-//go:embed appConfigs_fortest.yaml
 var embedAppCfg []byte
 var testenv = true
 
