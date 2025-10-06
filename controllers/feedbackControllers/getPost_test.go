@@ -14,6 +14,8 @@ func Test_GetFeedbackPosts(t *testing.T) {
 	router := gin.New()
 	router.GET("/api/feedback", func(c *gin.Context) {
 		getFeedbackPosts(c, false)
+		data, _ := c.Get("data")
+		log.Printf("%v", data)
 	})
 
 	// 查询参数模板
@@ -23,7 +25,5 @@ func Test_GetFeedbackPosts(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
-
-	log.Printf("%v", w.Body.String())
 
 }
