@@ -1,11 +1,8 @@
+# 后端专用 Dockerfile
 FROM golang:1.22 AS builder
 WORKDIR /app
-
-# 先只复制 go.mod 和 go.sum，这样能缓存依赖
 COPY go.mod go.sum ./
 RUN go mod download
-
-# 再复制其他源码
 COPY . .
 RUN go build -o server .
 
