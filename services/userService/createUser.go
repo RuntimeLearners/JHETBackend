@@ -33,14 +33,14 @@ func CreateUser(
 	// 	return nil, exception.ApiParamError
 	// }
 
-	_, err = GetUserByNum(studentID) //判断编号是否重复
+	_, err = GetUserByNumIncludeDeleted(studentID) //判断编号是否重复（包括软删除的记录）
 	if err == nil {
 		return nil, exception.UsrAlreadyExisted
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 
-	_, err = GetUserByEmail(email) //判断邮箱是否重复
+	_, err = GetUserByEmailIncludeDeleted(email) //判断邮箱是否重复
 	if err == nil {
 		return nil, exception.UsrAlreadyExisted
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -75,14 +75,14 @@ func CreateUser(
 		Major:        major,
 		PhoneNumber:  phoneNumber,
 		PermGroupID:  permGroupID,
-		Activation:   "", //账户激活状态(保留,用于验证邮箱是否存在)
+		Activation:   activation, //账户激活状态(保留,用于验证邮箱是否存在)
 	}
 
-	if activation { // 为什么账户激活状态使用string? <<< MucheXD-10.06
-		user.Activation = "true"
-	} else {
-		user.Activation = "false"
-	}
+	// if activation { // 为什么账户激活状态使用string? <<< MucheXD-10.06
+	// 	user.Activation = true
+	// } else {
+	// 	user.Activation = false
+	// }
 
 	res := database.DataBase.Create(user)
 

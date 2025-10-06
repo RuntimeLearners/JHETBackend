@@ -30,12 +30,28 @@ func GetAccountInfoByUID(uid uint64) (*models.AccountInfo, error) {
 // 原因是，在我们的系统中，管理员和用户的信息在一个数据表中存储
 
 func GetUserByNum(id string) (*models.AccountInfo, error) {
-	user := models.AccountInfo{}
-	result := database.DataBase.Where(
-		&models.AccountInfo{
-			StudentID: id,
-		},
-	).First(&user)
+	var user models.AccountInfo
+	result := database.DataBase.Where("student_id = ?", id).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+// GetUserByNumIncludeDeleted 根据用户编号获取用户（包括软删除的记录）
+func GetUserByNumIncludeDeleted(id string) (*models.AccountInfo, error) {
+	var user models.AccountInfo
+	result := database.DataBase.Unscoped().Where("id = ?", id).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+// GetUserByEmail 根据用户邮箱获取用户
+func GetUserByEmailIncludeDeleted(email string) (*models.AccountInfo, error) {
+	var user models.AccountInfo
+	result := database.DataBase.Unscoped().Where("email = ?", email).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -44,12 +60,8 @@ func GetUserByNum(id string) (*models.AccountInfo, error) {
 
 // GetUserByID 根据用户ID获取用户
 func GetUserByID(id uint64) (*models.AccountInfo, error) {
-	user := models.AccountInfo{}
-	result := database.DataBase.Where(
-		&models.AccountInfo{
-			ID: id,
-		},
-	).First(&user)
+	var user models.AccountInfo
+	result := database.DataBase.Where("id = ?", id).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -58,12 +70,8 @@ func GetUserByID(id uint64) (*models.AccountInfo, error) {
 
 // GetUserByEmail 根据用户邮箱获取用户
 func GetUserByEmail(email string) (*models.AccountInfo, error) {
-	user := models.AccountInfo{}
-	result := database.DataBase.Where(
-		&models.AccountInfo{
-			Email: email,
-		},
-	).First(&user)
+	var user models.AccountInfo
+	result := database.DataBase.Where("email = ?", email).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -72,12 +80,8 @@ func GetUserByEmail(email string) (*models.AccountInfo, error) {
 
 // GetUserByName 根据用户姓名获取用户
 func GetUserByName(name string) (*models.AccountInfo, error) {
-	user := models.AccountInfo{}
-	result := database.DataBase.Where(
-		&models.AccountInfo{
-			RealName: name,
-		},
-	).First(&user)
+	var user models.AccountInfo
+	result := database.DataBase.Where("realname = ?", name).First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}

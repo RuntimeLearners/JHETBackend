@@ -1,10 +1,10 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // 数据库中用户信息模型
@@ -18,19 +18,19 @@ type AccountInfo struct {
 	UserName       string    `json:"username" gorm:"column:username;index"`         // 用户显示名称
 	PermGroupID    uint32    `json:"permGroupID" gorm:"index"`                      // 用户所在权限组
 	AvatarFileUUID uuid.UUID `json:"avatar_fileuuid" gorm:"column:avatar_fileuuid"` //头像文件名
-	Activation     string    `json:"-"`                                             //账户激活状态(保留,用于验证邮箱是否存在)
+	Activation     bool      `json:"-"`                                             //账户激活状态(保留,用于验证邮箱是否存在)
 
 	// 用户关联信息
 
-	RealName    string       `json:"realname" gorm:"column:realname;index"`
-	StudentID   string       `json:"studentID" gorm:"index"` //学号/人员编号
-	Major       string       `json:"major"`                  //专业
-	Department  string       `json:"department"`             //部门/院系 学生和管理员均有此项
-	Grade       string       `json:"grade"`                  //年级 F:2025
-	PhoneNumber string       `json:"phoneNumber"`            //手机号
-	CreatedAt   time.Time    `json:"createdAt" gorm:"index"`
-	UpdatedAt   time.Time    `json:"updatedAt"`
-	DeletedAt   sql.NullTime `json:"deletedAt,omitempty"`
+	RealName    string         `json:"realname" gorm:"column:realname;index"`
+	StudentID   string         `json:"studentID" gorm:"index"` //学号/人员编号
+	Major       string         `json:"major"`                  //专业
+	Department  string         `json:"department"`             //部门/院系 学生和管理员均有此项
+	Grade       string         `json:"grade"`                  //年级 F:2025
+	PhoneNumber string         `json:"phoneNumber"`            //手机号
+	CreatedAt   time.Time      `json:"createdAt" gorm:"index"`
+	UpdatedAt   time.Time      `json:"updatedAt"`
+	DeletedAt   gorm.DeletedAt `json:"deletedAt,omitempty" gorm:"index"`
 
 	// 备用
 

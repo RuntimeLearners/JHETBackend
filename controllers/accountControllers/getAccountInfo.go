@@ -28,8 +28,9 @@ func GetAccountInfoAdmin(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 		return
+	} else {
+		utils.JsonSuccessResponse(c, "查询成功", accountInfo)
 	}
-	utils.JsonSuccessResponse(c, "查询成功", accountInfo)
 }
 
 // 普通用户获取信息
@@ -51,9 +52,10 @@ func GetAccountInfoUser(c *gin.Context) {
 		if err != nil {
 			c.Error(err)
 			return
+		} else {
+			utils.JsonSuccessResponse(c, "查询成功", accountInfo)
+			return
 		}
-		utils.JsonSuccessResponse(c, "查询成功", accountInfo)
-		return
 	}
 	//传入了别人的id
 	confidentiality := true //保密信息--是
@@ -61,8 +63,9 @@ func GetAccountInfoUser(c *gin.Context) {
 	if err != nil {
 		c.Error(err)
 		return
+	} else {
+		utils.JsonSuccessResponse(c, "查询成功", accountInfo)
 	}
-	utils.JsonSuccessResponse(c, "查询成功", accountInfo)
 }
 
 // <comment(MucheXD)> 虽然这部分现在是你负责，但是为什么要把具有权限的
@@ -78,13 +81,20 @@ func GetAccountInfo(c *gin.Context, userIDStr string, confidentiality bool) (mod
 		//c.Error(exception.ApiParamError)
 		return models.AccountInfo{}, exception.ApiParamError
 	}
+
+	var accountInfo *models.AccountInfo
 	//accountInfo, err := userService.GetAccountInfoByUID(userID)
-	accountInfo, err := userService.GetUserByID(userID)
+	if !confidentiality {
+		accountInfo, err = userService.GetUserByNumIncludeDeleted(userIDStr)
+	} else {
+		accountInfo, err = userService.GetUserByID(userID)
+	}
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return models.AccountInfo{}, exception.UsrNotExisted
 		}
-		c.Error(err)
+		// 不要在这里调用c.Error()，直接返回错误让调用方处理
 		return models.AccountInfo{}, err
 	}
 

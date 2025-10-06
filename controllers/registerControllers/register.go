@@ -84,7 +84,6 @@ func CreateUser(c *gin.Context, isAdmin bool) { //管理员新增用户
 		} else {
 			fmt.Println("读取失败0:", err)
 			c.Error(exception.SysCannotLoadFromDB)
-
 		}
 		return
 	}
