@@ -50,6 +50,17 @@ func UnifiedErrorHandler() gin.HandlerFunc {
 			}
 			c.Abort()
 		}
+
+		// 成功时，返回统一的结构
+		data, exist := c.Get("data")
+		if !exist {
+			// 有的接口没数据，直接返回空 data
+			data = nil
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "获取成功",
+			"data":    data})
 	}
 }
 

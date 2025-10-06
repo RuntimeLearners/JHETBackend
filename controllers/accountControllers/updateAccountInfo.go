@@ -52,7 +52,7 @@ func UpdateAccountInfoUser(c *gin.Context) {
 			return
 		} else {
 			//1406 数据过长
-			utils.JsonErrorResponse(c, int(mysqlErr.Number), fmt.Sprintf("更新失败:", mysqlErr.Message))
+			utils.JsonErrorResponse(c, int(mysqlErr.Number), fmt.Sprintf("更新失败: %v", mysqlErr.Message))
 		}
 	} else {
 		utils.JsonSuccessResponse(c, "更新成功", nil)

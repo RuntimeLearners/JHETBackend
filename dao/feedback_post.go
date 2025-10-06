@@ -5,11 +5,13 @@ import (
 	"JHETBackend/configs/database"
 	"JHETBackend/models"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
-// FeedbackPostDB 数据库模型 用于service层传入数据打包
+// FeedbackPostDB 数据库模型 用于service层出入数据打包
 type FeedbackPostDTO struct {
 	UserID      uint64
 	Title       string
@@ -18,6 +20,9 @@ type FeedbackPostDTO struct {
 	Precedence  uint8
 	IsAnonymous bool
 	IsPrivate   bool
+	IsSpam      bool
+	CreateAt    time.Time
+	UpdatedAt   time.Time
 	ParentID    uint64
 	ReplyDepth  uint8
 }
@@ -33,7 +38,7 @@ func CreateFbPost(postdata FeedbackPostDTO) error {
 	}
 
 	newPost := models.FeedbackPost{
-		UserID:          postdata.UserID,
+		CreaterID:       postdata.UserID,
 		Title:           postdata.Title,
 		Content:         postdata.Content,
 		Precedence:      postdata.Precedence,
@@ -110,7 +115,7 @@ func GetFbPostData(postID uint64) (FeedbackPostDTO, error) {
 
 	// 组装 DTO
 	dto = FeedbackPostDTO{
-		UserID:      postModel.UserID,
+		UserID:      postModel.CreaterID,
 		Title:       postModel.Title,
 		Content:     postModel.Content,
 		Attachments: attachmentUUIDs,
@@ -118,6 +123,9 @@ func GetFbPostData(postID uint64) (FeedbackPostDTO, error) {
 		IsAnonymous: postModel.IsAnonymous,
 		IsPrivate:   postModel.IsPrivate,
 		ParentID:    0, // 如果 ParentID 为 nil 则默认为 0
+		IsSpam:      postModel.IsSpam,
+		CreateAt:    postModel.CreatedAt,
+		UpdatedAt:   postModel.UpdatedAt,
 		ReplyDepth:  postModel.ReplyDepth,
 	}
 	if postModel.ParentID != nil {
@@ -143,6 +151,39 @@ func GetLatestUpdatedFbIDs(maxCount int, offset int) []uint64 {
 								Limit(maxCount).          // 取前 N 条
 								Offset(offset).           // 偏移量
 								Pluck("id", &ids)         // 只查 id 字段并写入 ids 切片
+	return ids
+}
+
+func GetFbIDsWithSearchParams(searchParams models.SearchParams) []uint64 {
+	// 生成函数指针组 用于统一调用
+	opts := []func(*gorm.DB) *gorm.DB{
+		addSearchCond("creater_id = ?", searchParams.CreaterID),
+		addSearchCond("show_privates = ?", searchParams.ShowPrivates),
+		addSearchCond("created_at <= ?", searchParams.CreatedBefore),
+		addSearchCond("created_at >= ?", searchParams.CreatedAfter),
+		addSearchCond("updated_at <= ?", searchParams.CreatedBefore),
+		addSearchCond("updated_at >= ?", searchParams.CreatedAfter),
+		addSearchCond("precedence >= ?", searchParams.MinPrecedence),
+		addSearchCond("precedence <= ?", searchParams.MaxPrecedence),
+	}
+
+	dbReader := database.DataBase.Model(&models.FeedbackPost{}) // 指定数据库模型
+	for _, filter := range opts {                               // 遍历所有筛选器
+		dbReader = filter(dbReader)
+	}
+	// 特殊条件单独处理
+	if !searchParams.ShowSpams { // 隐藏垃圾帖逻辑
+		dbReader.Where("is_spam", false)
+	}
+	if !searchParams.ShowPrivates { // 隐藏私密帖逻辑
+		dbReader.Where("is_private", false)
+	}
+	var ids []uint64
+	dbReader.
+		Order("updated_at DESC").                        // 按创建时间倒序
+		Limit(searchParams.Size).                        // 取前 N 条
+		Offset((searchParams.Page-1)*searchParams.Size). // 偏移量 溢出应该直接返回空
+		Pluck("id", &ids)                                // 直接选 id 列
 	return ids
 }
 
@@ -187,4 +228,15 @@ func getFbPostAttachmentsUUID(postID uint64) ([]uuid.UUID, error) {
 		}
 	}
 	return attachments, nil
+}
+
+// 判断传入是否为空并自动给 GORM 查询添加条件
+// 传回的是一个函数指针 务必注意使用时还需统一调用
+func addSearchCond(sqlFrag string, ptr any) func(*gorm.DB) *gorm.DB {
+	return func(tx *gorm.DB) *gorm.DB {
+		if ptr == nil {
+			return tx // 空条件判断
+		}
+		return tx.Where(sqlFrag, ptr)
+	}
 }

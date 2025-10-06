@@ -3,6 +3,7 @@ package feedbackservice
 import (
 	"JHETBackend/common/exception"
 	"JHETBackend/dao"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -11,8 +12,11 @@ type FeedbackBasics struct {
 	UserID      uint64
 	Title       string
 	Content     string
-	Attachments []uuid.UUID // List of attachment UUIDs
+	Attachments []uuid.UUID
 	IsAnonymous bool
+	IsSpam      bool
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type FeedbackPost struct {
