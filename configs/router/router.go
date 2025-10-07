@@ -58,6 +58,10 @@ func InitEngine() *gin.Engine {
 	ginEngine.GET("/api/feedback/:id", middleware.UnifiedErrorHandler(),
 		middleware.Auth,
 		feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,故先写死
+	//回复
+	ginEngine.POST("api/feedback/:id/reply", middleware.UnifiedErrorHandler(),
+middleware.Auth,
+feedbackcontrollers.CreateFeedbackReply)
 
 	//用户信息这一块
 	//无需权限 测试用
@@ -114,7 +118,12 @@ func InitEngine() *gin.Engine {
 	// ginEngine.GET("/api/feedback/:id", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
 	// 	middleware.NeedPerm(permission.Perm_QueryFeedbackLog),
-	// 	feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,故先写死
+	// 	feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,
+	//回复
+	//ginEngine.POST("api/feedback/:id/reply", middleware.UnifiedErrorHandler(),
+//middleware.Auth,
+//middleware.NeedPerm(permission.Perm_FeedbackReply),
+//feedbackcontrollers.CreateFeedbackReply)
 
 	// //普通用户
 	// // 获取用户信息

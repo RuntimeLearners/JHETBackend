@@ -15,11 +15,11 @@ func MapPerm(c *gin.Context) uint32 {
 	} else {
 		switch userType {
 		case "user":
-			permGroupID = 1
+			permGroupID = 37
 		case "admin":
-			permGroupID = 2
+			permGroupID = 38
 		case "superadmin":
-			permGroupID = 3
+			permGroupID = 35
 		default:
 			c.Error(exception.ApiParamError)
 			fmt.Println("用户类型错误:", userType)
