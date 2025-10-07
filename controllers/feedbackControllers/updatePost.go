@@ -38,7 +38,7 @@ func SetFbPostAccepted(c *gin.Context) {
 
 func RatingFbPost(c *gin.Context) {
 	var req struct {
-		core uint8 `json:"score" binding:"required"`
+		Score uint8 `json:"score" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(exception.FbPostDataInvalid)
@@ -49,6 +49,10 @@ func RatingFbPost(c *gin.Context) {
 	postID, err := strconv.ParseUint(parentStr, 10, 64)
 	if err != nil {
 		c.Error(exception.FbPostDataInvalid)
+		return
+	}
+	if feedbackservice.RatingFbPost(postID, req.Score) != nil {
+		c.Error(exception.FbPostUpdateFailed)
 		return
 	}
 }
