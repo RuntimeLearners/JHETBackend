@@ -54,3 +54,21 @@ func SetFbPostSpamChecked(fbPostID uint64, acknowledge bool) error {
 	}
 	return nil
 }
+
+func SetFbPostPrecedence(fbPostID uint64, precedence uint8) error {
+	return nil
+}
+
+func RatingFbPost(fbPostID uint64, score uint8) error {
+	fbStatus, fbGetErr := dao.GetFbStatus(fbPostID)
+	if fbGetErr != nil {
+		return exception.FbPostNotFound // 获取状态失败, 视为帖子不存在(大概率)
+	}
+	if fbStatus != string(PostStatusResolved) { // 对的对的 只有解决的帖子才能评分
+		return exception.FbRatingUnslovedPost
+	}
+	if dao.RatingFbPost(fbPostID, score) != nil {
+		return exception.FbPostUpdateFailed
+	}
+	return nil
+}

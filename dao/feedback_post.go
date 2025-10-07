@@ -187,9 +187,9 @@ func GetFbIDsWithSearchParams(searchParams models.SearchParams) []uint64 {
 	return ids
 }
 
-func GetFbSpamStatus(postID uint64) (isSpam bool, spamChecked bool, err error) {
+func GetFbSpamStatus(fbPostID uint64) (isSpam bool, spamChecked bool, err error) {
 	if err := database.DataBase.Model(&models.FeedbackPost{}).
-		Where("id = ?", postID).
+		Where("id = ?", fbPostID).
 		Select("is_spam", "spam_checked").
 		Scan(&struct {
 			IsSpam        *bool
@@ -198,6 +198,31 @@ func GetFbSpamStatus(postID uint64) (isSpam bool, spamChecked bool, err error) {
 		return false, false, exception.FbPostNotFound
 	}
 	return isSpam, spamChecked, nil
+}
+
+func GetFbStatus(fbPostID uint64) (status string, err error) {
+	var result struct {
+		Status string
+	}
+	if err := database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Select("status").
+		Scan(&result).Error; err != nil {
+		return "", exception.FbPostNotFound
+	}
+	return result.Status, nil
+}
+
+func SetFbStatus(fbPostID uint64, status string) error {
+	return database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Update("status", status).Error
+}
+
+func RatingFbPost(fbPostID uint64, score uint8) error {
+	return database.DataBase.Model(&models.FeedbackPost{}).
+		Where("id = ?", fbPostID).
+		Update("rating", score).Error
 }
 
 func SetFbPostStatus(fbPostID uint64, status string) error {

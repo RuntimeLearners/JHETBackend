@@ -23,6 +23,7 @@ var (
 	FbPostDeleted           = NewException(2006, "反馈帖已被删除")
 	FbPostUpdateFailed      = NewException(2007, "无法更新反馈帖")
 	FbNotSpamDontChecked    = NewException(2008, "反馈帖未被标记为垃圾信息，无需审核")
+	FbRatingUnslovedPost    = NewException(2009, "无法评价未解决的反馈帖")
 
 	ApiNoFormFile         = NewException(4001, "无文件字段")
 	ApiFileTooLarge       = NewException(4002, "上传文件过大")
