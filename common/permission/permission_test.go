@@ -13,10 +13,7 @@ func Test_TryGetPermission(t *testing.T) {
 }
 
 func Test_AddPermission(t *testing.T) {
-	log.Printf("%v", permission.AddPermissionGroup("TEST", permission.Perm_ForTestOnly1))
-	log.Printf("%v", permission.GetAllPermissionGroups())
-	log.Printf("%v", permission.IsPermSatisfied(28, permission.Perm_ForTestOnly1))
-	log.Printf("%v", permission.IsPermSatisfied(28, permission.Perm_ForTestOnly2))
+	log.Printf("%v", permission.AddPermissionGroup("SU", permission.Perm_All_SUONLY))
 }
 
 func Test_AddUserPG(t *testing.T) {

@@ -17,9 +17,13 @@ import (
 type PermissionID uint32
 
 const (
-	_                 PermissionID = 0
+	_ PermissionID = 0
+
+	// 授予全部权限 (包括未来添加的权限)
+
 	Perm_ForTestOnly1 PermissionID = 255
 	Perm_ForTestOnly2 PermissionID = 254
+	Perm_All_SUONLY   PermissionID = 253
 
 	// 登录
 	Perm_Login PermissionID = 001 // 登录
@@ -98,6 +102,9 @@ func IsPermSatisfied(permGroupId uint32, needed ...PermissionID) bool {
 	if err != nil {
 		log.Print("[ERROR][PERM] 该权限组不存在 视为无权")
 		return false
+	}
+	if tocheck.Permissions.Test(uint(Perm_All_SUONLY)) {
+		return true // 拥有全部权限 直接返回真
 	}
 	for _, perm := range needed {
 		if !tocheck.Permissions.Test(uint(perm)) {
