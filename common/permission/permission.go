@@ -55,6 +55,7 @@ const (
 	Perm_GetUserPermission  PermissionID = 104 // 获取用户权限
 	Perm_EditUserPermission PermissionID = 105 // 编辑用户权限
 	Perm_GetAnyProfile      PermissionID = 106 // 获取个人的所有信息
+	Perm_EditAnyProfile     PermissionID = 107 // 编辑个人的所有信息
 
 	// 超管 - 垃圾审核
 	Perm_GetPendingSpam PermissionID = 110 // 获取待审核垃圾

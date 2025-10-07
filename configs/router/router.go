@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"JHETBackend/controllers/accountControllers"
+	feedbackcontrollers "JHETBackend/controllers/feedbackControllers"
+	filecontroller "JHETBackend/controllers/fileController"
 	"JHETBackend/controllers/loginControllers"
 	"JHETBackend/controllers/registerControllers"
 
@@ -42,8 +44,20 @@ func InitEngine() *gin.Engine {
 
 	ginEngine.POST("/api/auth/register", middleware.UnifiedErrorHandler(), registerControllers.CreateUserUser)
 
+	ginEngine.POST("/api/user/avatar", middleware.UnifiedErrorHandler(), middleware.Auth, filecontroller.UpdateAvatar)
+
+	//帖子这一块
 	//上传图片这一块
-	//ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UploadImage)
+	ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth,
+		filecontroller.UpdateAvatar)
+	//发帖这一块
+	ginEngine.POST("/api/feedback", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		feedbackcontrollers.CreateFeedbackPost)
+	//查询帖子这一块
+	ginEngine.GET("/api/feedback/:id", middleware.UnifiedErrorHandler(),
+		middleware.Auth,
+		feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,故先写死
 
 	//用户信息这一块
 	//无需权限 测试用
@@ -76,15 +90,32 @@ func InitEngine() *gin.Engine {
 		middleware.Auth,
 		accountControllers.UpdateAccountInfoAdmin)
 
-	// //TODO: 超管面板 增删改查用户
 	//通用路由
 	// // 修改密码
 	// ginEngine.PUT("/api/user/pwd/", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
 	// 	accountControllers.ChangePassword)
 	// // 更改头像
-	// // ginEngine.POST("/api/user/avatar", middleware.UnifiedErrorHandler(), middleware.Auth, fileControllers.UpdateAvatar)
-	//
+	// // ginEngine.POST("/api/user/avatar", middleware.UnifiedErrorHandler(), middleware.Auth,
+	// middleware.NeedPerm(permission.Perm_UpdateAvatar),
+	// filecontroller.UpdateAvatar)
+
+	// //帖子这一块
+	// //上传图片这一块
+	// ginEngine.POST("/api/upload/image", middleware.UnifiedErrorHandler(), middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_UploadImage),
+	// 	filecontroller.UpdateAvatar)
+	// //发帖这一块
+	// ginEngine.POST("/api/feedback", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_SubmitFeedback),
+	// 	feedbackcontrollers.CreateFeedbackPost)
+	// //查询帖子这一块
+	// ginEngine.GET("/api/feedback/:id", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_QueryFeedbackLog),
+	// 	feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,故先写死
+
 	// //普通用户
 	// // 获取用户信息
 	// ginEngine.GET("/api/user/info/", middleware.UnifiedErrorHandler(),
@@ -106,7 +137,6 @@ func InitEngine() *gin.Engine {
 	// 	middleware.Auth,
 	// 	middleware.NeedPerm(permission.Perm_GetAnyProfile),
 	// 	accountControllers.GetAccountInfoAdmin)
-
 	// // 新增用户
 	// ginEngine.POST("/api/admin/users", middleware.UnifiedErrorHandler(),
 	// 	middleware.Auth,
@@ -117,6 +147,11 @@ func InitEngine() *gin.Engine {
 	// 	middleware.Auth,
 	// 	middleware.NeedPerm(permission.Perm_DeleteUser),
 	// 	accountControllers.DeleteAccount)
+	// //修改用户信息
+	// ginEngine.PUT("/api/admin/users/:id", middleware.UnifiedErrorHandler(),
+	// 	middleware.Auth,
+	// 	middleware.NeedPerm(permission.Perm_EditAnyProfile),
+	// 	accountControllers.UpdateAccountInfoAdmin)
 
 	return ginEngine
 
