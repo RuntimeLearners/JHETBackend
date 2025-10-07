@@ -11,6 +11,7 @@ import (
 	"JHETBackend/controllers/loginControllers"
 	"JHETBackend/controllers/registerControllers"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	//"github.com/silenceper/wechat/v2/openplatform/account"
 )
@@ -24,6 +25,14 @@ func SayHello(c *gin.Context) {
 
 func InitEngine() *gin.Engine {
 	ginEngine := gin.Default()
+
+	ginEngine.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	fmt.Println(gin.Context{})
 	// // 添加中间件处理字符编码
@@ -60,8 +69,8 @@ func InitEngine() *gin.Engine {
 		feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,故先写死
 	//回复
 	ginEngine.POST("api/feedback/:id/reply", middleware.UnifiedErrorHandler(),
-middleware.Auth,
-feedbackcontrollers.CreateFeedbackReply)
+		middleware.Auth,
+		feedbackcontrollers.CreateFeedbackReply)
 
 	//用户信息这一块
 	//无需权限 测试用
@@ -121,9 +130,9 @@ feedbackcontrollers.CreateFeedbackReply)
 	// 	feedbackcontrollers.GetAllFeedbackPosts) //由于给管理员配置函数麻烦,
 	//回复
 	//ginEngine.POST("api/feedback/:id/reply", middleware.UnifiedErrorHandler(),
-//middleware.Auth,
-//middleware.NeedPerm(permission.Perm_FeedbackReply),
-//feedbackcontrollers.CreateFeedbackReply)
+	//middleware.Auth,
+	//middleware.NeedPerm(permission.Perm_FeedbackReply),
+	//feedbackcontrollers.CreateFeedbackReply)
 
 	// //普通用户
 	// // 获取用户信息
