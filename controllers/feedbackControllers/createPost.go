@@ -4,6 +4,7 @@ import (
 	"JHETBackend/common/exception"
 	"JHETBackend/controllers/accountControllers"
 	feedbackservice "JHETBackend/services/feedbackService"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -80,5 +81,53 @@ func CreateFeedbackPost(c *gin.Context) {
 }
 
 func CreateFeedbackReply(c *gin.Context) {
-	// TODO
+	var req createFeedbackReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(exception.FbPostDataInvalid)
+		return
+	}
+
+	// 解析附件
+	attachments := make([]uuid.UUID, 0, len(req.AttachmentUUIDs))
+	for _, s := range req.AttachmentUUIDs {
+		uid, err := uuid.Parse(s)
+		if err != nil {
+			c.Error(exception.FbPostAttachmentInvalid)
+			return
+		}
+		attachments = append(attachments, uid)
+	}
+
+	// 取当前用户 ID
+	accountID, err := accountControllers.GetAccountIDFromContext(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	// 从 URL 参数获取 parent id，并转换为 uint64
+	parentStr := c.Param("id")
+	parent, err := strconv.ParseUint(parentStr, 10, 64)
+	if err != nil {
+		c.Error(exception.FbPostDataInvalid)
+		return
+	}
+
+	// 组装业务对象
+	postData := feedbackservice.FeedbackReplyPost{
+		FeedbackBasics: feedbackservice.FeedbackBasics{
+			UserID:      accountID,
+			Title:       req.Title,
+			Content:     req.Content,
+			Attachments: attachments,
+			IsAnonymous: req.IsAnonymous,
+		},
+		ParentID: parent,
+	}
+
+	// 给到 service 层
+	if err := feedbackservice.ReplyFeedbackPost(postData); err != nil {
+		c.Error(exception.ApiFeedbackNotCreated)
+		return
+	}
 }

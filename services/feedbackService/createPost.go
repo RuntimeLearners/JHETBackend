@@ -14,9 +14,11 @@ type FeedbackBasics struct {
 	Content     string
 	Attachments []uuid.UUID
 	IsAnonymous bool
-	IsSpam      bool
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+
+	// OUTPUT ONLY
+	IsSpam    bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type FeedbackPost struct {
